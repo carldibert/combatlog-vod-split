@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+# VS ignore files
+*.vsidx
+*.db-shm
+*.opendb
+*.ipch
+*.suo
+*.db-wal
+*.db
+/.vs/combatlog-vod-split/v17/ipch/AutoPCH/5cc3ae54da1c9e51/COMBATLOG-VOD-SPLIT.ipch
+/.gitignore
+/.vs/combatlog-vod-split/v17/.suo
+/.vs/combatlog-vod-split/v17/Browse.VC.db
+/.vs/combatlog-vod-split/v17/DocumentLayout.json
