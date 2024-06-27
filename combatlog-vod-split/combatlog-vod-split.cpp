@@ -1,47 +1,17 @@
 #include <iostream>
-#include <fstream>
-
-using namespace std;
-class combat_log
-{
-public:
-    string combatLog;
-    fstream combatLogFile;
-    
-    bool checkIfFileExists()
-    {
-        //combatLogFile.open("D:\\Documents\\Split-2024-06-08T235016.570Z-DatheaAscended Mythic.txt");
-        combatLogFile.open("Split-2024-06-08T235016.570Z-DatheaAscended Mythic.txt");
-
-        if (combatLogFile.fail())
-        {
-            cout << "failed" << endl;
-        }
-        else
-        {
-            cout << "opened" << endl;
-        }
-
-        return true;
-    }
-
-    bool getExeFilepath()
-    {
-
-
-        return true;
-    }
-};
+#include <string>
+#include "FileHandling.h"
+#include "CombatLog.h"
 
 class cli_handling
 {
 public:
-    string userInput;
+    std::string userInput;
 
-    bool acceptExitRequest()
+    bool AcceptExitRequest()
     {
-        cout << "type r to restart or any other key to exit: ";
-        cin >> userInput;
+        std::cout << "type R to restart or any other key to exit: ";
+        std::cin >> userInput;
         if (userInput == "r")
         {
             return false;
@@ -51,12 +21,18 @@ public:
             return true;
         }
     }
+
+    bool ProcessFiles()
+    {
+
+    }
 };
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    std::cout << "Hello World!\n" << std::endl;
 
-    combat_log activeLog;
-    activeLog.checkIfFileExists();
+    //CombatEvents combatEvents("date1", "time1", "event1");
+    //std::cout << combatEvents.GetDate() << std::endl;
+
 }

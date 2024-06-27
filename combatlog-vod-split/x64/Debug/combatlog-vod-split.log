@@ -1,2 +1,5 @@
-﻿  combatlog-vod-split.cpp
+﻿  CombatLog.cpp
+  FileHandling.cpp
+  combatlog-vod-split.cpp
+  Generating Code...
   combatlog-vod-split.vcxproj -> D:\Documents\Workspace\combatlog-vod-split\x64\Debug\combatlog-vod-split.exe
