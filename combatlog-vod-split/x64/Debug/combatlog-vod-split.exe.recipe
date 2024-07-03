@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\Documents\Workspace\combatlog-vod-split\x64\Debug\combatlog-vod-split.exe</FullPath>
+      <FullPath>D:\Documents\Workspace\combatlog-vod-split\bin\combatlog-vod-split.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

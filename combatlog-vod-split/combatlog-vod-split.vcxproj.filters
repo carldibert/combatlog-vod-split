@@ -18,18 +18,18 @@
     <ClCompile Include="combatlog-vod-split.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CombatLog.cpp">
+    <ClCompile Include="file_handling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileHandling.cpp">
+    <ClCompile Include="ffmpeg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CombatLog.h">
+    <ClInclude Include="file_handling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileHandling.h">
+    <ClInclude Include="ffmpeg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

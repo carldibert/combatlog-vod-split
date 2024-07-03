@@ -1,38 +1,57 @@
 #include <iostream>
 #include <string>
-#include "FileHandling.h"
-#include "CombatLog.h"
+#include <vector>
+#include <thread>
+#include <map>
+#include <stdlib.h>
 
-class cli_handling
+#include "file_handling.h"
+#include <windows.h>
+
+extern "C"
 {
-public:
-    std::string userInput;
+#include <libavformat/avformat.h>
+#include <libavutil/dict.h>
+}
 
-    bool AcceptExitRequest()
-    {
-        std::cout << "type R to restart or any other key to exit: ";
-        std::cin >> userInput;
-        if (userInput == "r")
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
 
-    bool ProcessFiles()
-    {
-
-    }
-};
+void ProcessLogs(file_handling* files, std::string logFile)
+{
+    combat_log log(files->exePath);
+    log.ReadFile(logFile);
+    files->contents.insert(std::pair<std::string, combat_log>(logFile, log));
+}
 
 int main()
 {
-    std::cout << "Hello World!\n" << std::endl;
+    int threadCount = 8;
 
-    //CombatEvents combatEvents("date1", "time1", "event1");
-    //std::cout << combatEvents.GetDate() << std::endl;
+    instance_definitions defys;
+
+    file_handling files;
+
+    files.CheckForLogFiles();
+    std::vector<std::thread> processingThreads;
+
+    //processes through available files and adds log info
+    for (int i = 0; i < files.logFiles.size(); i++)
+    {
+        processingThreads.push_back(std::thread(&ProcessLogs, &files, files.logFiles[i]));
+        Sleep(20);
+    }
+    for (auto& threads : processingThreads)
+    {
+        threads.join();
+    }
+
+    
+    
+    
+
+
+
+
+    return 0;
+
 
 }
