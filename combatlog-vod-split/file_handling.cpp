@@ -37,11 +37,11 @@ std::filesystem::path file_handling::GetExeDirectory()
     return std::filesystem::path { szPath }.parent_path();
 }
 
-combat_log_events::combat_log_events(std::string initDate, std::string initTime, std::string initCombatInfo, std::string initTarget)
+combat_log_events::combat_log_events(std::string initDate, std::string initTime, std::string initLogAction, std::string initTarget)
 {
     this->date = initDate;
     this->time = initTime;
-    this->combatInfo = initCombatInfo;
+    this->logAction = initLogAction;
     this->target = initTarget;
 };
 
@@ -119,9 +119,9 @@ bool combat_log::ReadFile(std::string fileName)
                     }
                 }
                 
+                std::vector<std::string> eventsClean;
                 if (targetEvent.find("\"") != std::string::npos)
                 {
-                    std::vector<std::string> eventsClean;
                     std::vector<std::string> target = SplitString(targetEvent, '\"');
                     for (int i = 0; i < target.size(); i++)
                     {
@@ -131,17 +131,33 @@ bool combat_log::ReadFile(std::string fileName)
                         }
                         else if (i == target.size() - 1)
                         {
-                            eventsClean.push_back(target[i].substr(1, target[i].length()));
+                            std::vector<std::string> tmp = SplitString(target[i].substr(1, target[i].length()), ',');
+                            for (int j = 0; j < tmp.size(); j++)
+                            {
+                                eventsClean.push_back(tmp[j]);
+                            }
+                        }
+                        else if (i == 0)
+                        {
+                            std::vector<std::string> tmp = SplitString(target[i].substr(0, target[i].size() - 1), ',');
+                            for (int j = 0; j < tmp.size(); j++)
+                            {
+                                eventsClean.push_back(tmp[j]);
+                            }
                         }
                         else
                         {
-                            eventsClean.push_back(target[i].substr(1, target[i].length()));
+                            std::vector<std::string> tmp = SplitString(target[i].substr(1, target[i].size() - 2), ',');
+                            for (int j = 0; j < tmp.size(); j++)
+                            {
+                                eventsClean.push_back(tmp[j]);
+                            }
                         }
                     }
                 }
                 else
                 {
-                    std::vector<std::string> eventsClean = SplitString(targetEvent, '\"');
+                    eventsClean = SplitString(targetEvent, ',');
                 }
                     
                 
@@ -155,8 +171,8 @@ bool combat_log::ReadFile(std::string fileName)
                 combatLogEvents.push_back(combat_log_events(
                     actionEvent[0],
                     actionEvent[1],
-                    combatEvents[0],
-                    "test"//target[1]
+                    eventsClean[0],
+                    eventsClean[2]
                     ));
                 }
                 line++;

@@ -17,12 +17,14 @@
 class combat_log_events
 {
 public:
-    combat_log_events(std::string initDate, std::string initTime, std::string initCombatInfo, std::string target);
+    combat_log_events(std::string initDate, std::string initTime, std::string initLogAction, std::string target);
 private:
+    std::string logAction;
+    std::string target;
     std::string date;
     std::string time;
-    std::string combatInfo;
-    std::string target;
+    std::string keyLevel;
+    std::string raidDifficulty;
 };
 
 class combat_log
