@@ -118,18 +118,45 @@ bool combat_log::ReadFile(std::string fileName)
                         targetEvent += " " + actionEvent[i];
                     }
                 }
-                std::vector<std::string> target = SplitString(targetEvent, '\"');
+                
+                if (targetEvent.find("\"") != std::string::npos)
+                {
+                    std::vector<std::string> eventsClean;
+                    std::vector<std::string> target = SplitString(targetEvent, '\"');
+                    for (int i = 0; i < target.size(); i++)
+                    {
+                        if (i % 2 != 0)
+                        {
+                            eventsClean.push_back(target[i]);
+                        }
+                        else if (i == target.size() - 1)
+                        {
+                            eventsClean.push_back(target[i].substr(1, target[i].length()));
+                        }
+                        else
+                        {
+                            eventsClean.push_back(target[i].substr(1, target[i].length()));
+                        }
+                    }
+                }
+                else
+                {
+                    std::vector<std::string> eventsClean = SplitString(targetEvent, '\"');
+                }
+                    
+                
                 //whitelisted events - encounter for raids and zone entered for m+
                 if (
                     combatEvents[0] == "ENCOUNTER_START" || 
                     combatEvents[0] == "ENCOUNTER_END" ||
-                    combatEvents[0] == "ZONE_CHANGE")
+                    combatEvents[0] == "ZONE_CHANGE" ||
+                    combatEvents[0] == "CHALLENGE_MODE_START")
                 {
                 combatLogEvents.push_back(combat_log_events(
                     actionEvent[0],
                     actionEvent[1],
                     combatEvents[0],
-                    target[1]
+                    "test"//target[1]
                     ));
                 }
                 line++;
