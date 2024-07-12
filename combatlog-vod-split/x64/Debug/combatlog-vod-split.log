@@ -1,2 +1,3 @@
-﻿  file_handling.cpp
+﻿ffmpeg.obj : warning LNK4099: PDB '' was not found with 'ffmpeg.obj' or at ''; linking object as if no debug info
+file_handling.obj : warning LNK4099: PDB '' was not found with 'file_handling.obj' or at ''; linking object as if no debug info
   combatlog-vod-split.vcxproj -> D:\Documents\Workspace\combatlog-vod-split\bin\combatlog-vod-split.exe
