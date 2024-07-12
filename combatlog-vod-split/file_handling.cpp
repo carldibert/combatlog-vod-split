@@ -35,9 +35,38 @@ std::filesystem::path file_handling::GetExeDirectory()
     wchar_t szPath[MAX_PATH];
     GetModuleFileName(NULL, szPath, MAX_PATH);
     return std::filesystem::path { szPath }.parent_path();
-}
+};
 
-combat_log_events::combat_log_events(std::string initDate, std::string initTime, std::string initLogAction, std::string initTarget)
+DifficultyType convertToDifficultyTypeEnum (std::string& diff)
+{
+    if (diff == "14")
+    {
+        return Normal;
+    }
+    else if (diff == "15")
+    {
+        return Heroic;
+    }
+    else if (diff == "16")
+    {
+        return Mythic;
+    }
+    else if (diff == "17")
+    {
+        return LFR;
+    }
+    else
+    {
+        return World;
+    }
+};
+
+combat_log_events::combat_log_events()
+{
+
+};
+
+combat_log_events::combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget)
 {
     this->date = initDate;
     this->time = initTime;
@@ -79,6 +108,34 @@ std::vector<std::string> combat_log::SplitString(std::string str, char splitter)
 bool combat_log::CheckIfNumber(std::string str)
 {
     return isdigit(str[0]);
+};
+
+LogEventType convertToEnum (const std::string& str)
+{
+    if (str == "ENCOUNTER_START")
+    {
+        return ENCOUNTER_START;
+    }
+    else if (str == "ENCOUNTER_END")
+    {
+        return ENCOUNTER_END;
+    }
+    else if (str == "ZONE_CHANGE")
+    {
+        return ZONE_CHANGE;
+    }
+    else if (str == "CHALLENGE_MODE_START")
+    {
+        return CHALLENGE_MODE_START;
+    }
+    else if (str == "CHALLENGE_MODE_END")
+    {
+        return CHALLENGE_MODE_END;
+    }
+    else
+    {
+        return OTHER;
+    }
 };
 
 bool combat_log::ReadFile(std::string fileName)
@@ -159,21 +216,41 @@ bool combat_log::ReadFile(std::string fileName)
                 {
                     eventsClean = SplitString(targetEvent, ',');
                 }
-                    
-                
-                //whitelisted events - encounter for raids and zone entered for m+
-                if (
-                    combatEvents[0] == "ENCOUNTER_START" || 
-                    combatEvents[0] == "ENCOUNTER_END" ||
-                    combatEvents[0] == "ZONE_CHANGE" ||
-                    combatEvents[0] == "CHALLENGE_MODE_START")
+                  
+                LogEventType logType = convertToEnum(eventsClean[0]);
+                if (logType != OTHER)
                 {
-                combatLogEvents.push_back(combat_log_events(
-                    actionEvent[0],
-                    actionEvent[1],
-                    eventsClean[0],
-                    eventsClean[2]
-                    ));
+                    combat_log_events activeLine
+                    (
+                        actionEvent[0],
+                        actionEvent[1],
+                        logType,
+                        eventsClean[2]
+                    );
+                    switch (logType)
+                    {
+                        case ENCOUNTER_START:
+                            combatLogEvents.push_back(activeLine);
+                            break;
+                        case ENCOUNTER_END:
+                            combatLogEvents.push_back(activeLine);
+                            break;
+                        case ZONE_CHANGE:
+                            activeLine.difficulty = convertToDifficultyTypeEnum(eventsClean[3]);
+                            combatLogEvents.push_back(activeLine);
+                            break;
+                        case CHALLENGE_MODE_START:
+                            activeLine.keyLevel = std::stoi(eventsClean[4]);
+                            activeLine.isOpenWorld = false;
+                            activeLine.dungeonName = eventsClean[1];
+                            combatLogEvents.push_back(activeLine);
+                            break;
+                        case CHALLENGE_MODE_END:
+                            activeLine.keyChested = std::stoi(eventsClean[2]);
+                            activeLine.isOpenWorld = false;
+                            combatLogEvents.push_back(activeLine);
+                            break;
+                    }
                 }
                 line++;
             }
@@ -190,14 +267,3 @@ bool combat_log::ReadFile(std::string fileName)
     std::cout << "Ending Read on File: " << fileName << std::endl;
     return true;
 };
-
-instance_definitions::instance_definitions()
-{
-
-}
-
-void instance_definitions::something_output()
-{
-    //char* appData = System.getenv("AppData");
-    //std::cout << path << std::endl;
-}

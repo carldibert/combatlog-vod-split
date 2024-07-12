@@ -24,12 +24,18 @@
     <ClCompile Include="ffmpeg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="encounters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file_handling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ffmpeg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="encounters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

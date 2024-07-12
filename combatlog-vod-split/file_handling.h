@@ -13,18 +13,41 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+enum LogEventType
+{
+    ENCOUNTER_START = 0,
+    ENCOUNTER_END = 1,
+    ZONE_CHANGE = 2,
+    CHALLENGE_MODE_START = 3,
+    CHALLENGE_MODE_END = 4,
+    OTHER = 99
+};
+
+enum DifficultyType
+{
+    Normal = 14,
+    Heroic = 15,
+    Mythic = 16,
+    LFR = 17,
+    World = 100
+};
 
 class combat_log_events
 {
 public:
-    combat_log_events(std::string initDate, std::string initTime, std::string initLogAction, std::string target);
-private:
-    std::string logAction;
+    LogEventType logAction;
     std::string target;
     std::string date;
     std::string time;
-    std::string keyLevel;
-    std::string raidDifficulty;
+    int keyLevel;
+    DifficultyType difficulty;
+    std::string dungeonName;
+    bool keyChested;
+    bool isOpenWorld;
+    combat_log_events();
+    combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget);
+private:
+    
 };
 
 class combat_log
@@ -49,19 +72,7 @@ public:
     bool CheckForLogFiles();
     std::filesystem::path exePath;
     std::vector<std::string> logFiles;
-    std::map<std::string, combat_log> contents;
+    std::vector<combat_log> contents;
 private:
     std::filesystem::path GetExeDirectory();
-
-};
-
-class instance_definitions
-{
-public:
-    std::vector<std::string> raids;
-    std::vector<std::string> dungeons;
-    std::filesystem::path localappdata;
-    char* path;
-    instance_definitions();
-    void something_output();
 };

@@ -135,10 +135,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="combatlog-vod-split.cpp" />
+    <ClCompile Include="encounters.cpp" />
     <ClCompile Include="ffmpeg.cpp" />
     <ClCompile Include="file_handling.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="encounters.h" />
     <ClInclude Include="ffmpeg.h" />
     <ClInclude Include="file_handling.h" />
   </ItemGroup>
