@@ -14,7 +14,7 @@ extern "C"
 #include <libavutil/dict.h>
 }
 
-
+//for threading processing of logs 
 void ProcessLogs(file_handling* files, std::string logFile)
 {
     combat_log log(files->exePath);
@@ -23,26 +23,10 @@ void ProcessLogs(file_handling* files, std::string logFile)
     //files->contents.insert(std::pair<std::string, combat_log>(logFile, log));
 }
 
-int main()
+//populates the encounter list in a more sanitized format
+void PopulateEncounterList(std::vector<encounters>* encounterList, std::vector<combat_log> contents)
 {
-    file_handling files;
-
-    files.CheckForLogFiles();
-    std::vector<std::thread> processingThreads;
-
-    //processes through available files and adds log info
-    for (int i = 0; i < files.logFiles.size(); i++)
-    {
-        processingThreads.push_back(std::thread(&ProcessLogs, &files, files.logFiles[i]));
-        Sleep(20);
-    }
-    for (auto& threads : processingThreads)
-    {
-        threads.join();
-    }
-
-    std::vector<encounters> encounterList;
-    for (auto& var : files.contents)
+    for (auto& var : contents)
     {
         for (auto& evnt : var.combatLogEvents)
         {
@@ -68,11 +52,14 @@ int main()
             tmp.time = evnt.time;
             tmp.date = evnt.date;
             tmp.eventType = evnt.logAction;
-            encounterList.push_back(tmp);
+            encounterList->push_back(tmp);
         }
     }
-    
-    std::vector<Encounters_Ordered> orderedEncounters;
+};
+
+//orders encounters by start and end time + gives them names
+void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::vector<encounters>encounterList)
+{
     Encounters_Ordered tmp;
     std::string currentZone;
     for (auto& var : encounterList)
@@ -114,10 +101,37 @@ int main()
         {
             tmp.zone = currentZone;
             tmp.date = var.date;
-            orderedEncounters.push_back(tmp);
+            orderedEncounters->push_back(tmp);
             tmp = Encounters_Ordered();
         }
     }
+}
+
+int main()
+{
+    file_handling files;
+
+    files.CheckForLogFiles();
+    std::vector<std::thread> processingThreads;
+
+    //processes through available files and adds log info
+    for (int i = 0; i < files.logFiles.size(); i++)
+    {
+        processingThreads.push_back(std::thread(&ProcessLogs, &files, files.logFiles[i]));
+        Sleep(20);
+    }
+    for (auto& threads : processingThreads)
+    {
+        threads.join();
+    }
+
+    //gathers info from list and sanitizes the data
+    std::vector<encounters> encounterList;
+    PopulateEncounterList(&encounterList, files.contents);
+    
+    //orders encounters with their appropriate start and end times + dates
+    std::vector<Encounters_Ordered> orderedEncounters;
+    OrderEncounters(&orderedEncounters, encounterList);
     
 
 
