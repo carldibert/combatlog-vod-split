@@ -61,8 +61,6 @@ public:
     combat_log(std::filesystem::path exePath);
     bool ReadFile(std::string fileName);
     bool CheckIfNumber(std::string str);
-private:
-
 };
 
 class file_handling
