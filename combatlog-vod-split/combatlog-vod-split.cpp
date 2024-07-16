@@ -36,8 +36,9 @@ bool ffmpegSample()
     int stream_index = 0;
     //int* stream_mapping = NULL;
     int stream_mapping_size = 0;
+    int streamVideoIndex = 0;
 
-    in_filename = "X:\\2024-07-12_02-41-37.mkv";
+    in_filename = "X:\\2024-07-12 02-39-33 - Copy.mkv";
     out_filename = "X:\\output.mp4";
 
     pkt = av_packet_alloc();
@@ -87,6 +88,11 @@ bool ffmpegSample()
             continue;
         }
 
+        if (in_codecpar->codec_type != AVMEDIA_TYPE_VIDEO)
+        {
+            streamVideoIndex = i;
+        }
+
         stream_mapping[i] = stream_index++;
 
         out_stream = avformat_new_stream(ofmt_ctx, NULL);
@@ -120,6 +126,55 @@ bool ffmpegSample()
         return false;
     }
 
+    int64_t* dts_start_from = new int64_t[stream_mapping_size];
+    memset(dts_start_from, 0, sizeof(int64_t) * ifmt_ctx->nb_streams);
+    int64_t* pts_start_from = new int64_t[stream_mapping_size];
+    memset(pts_start_from, 0, sizeof(int64_t) * ifmt_ctx->nb_streams);
+    
+
+    AVFrame* frame;
+    AVPacket inPacket, outPacket;
+    AVIOContext* outFormatContext;
+
+    if (avio_open(&outFormatContext, in_filename, AVIO_FLAG_WRITE) < 0) {
+        fprintf(stderr, "convert(): cannot open out file\n");
+        return false;
+    }
+
+    
+
+    while (1)
+    {
+        AVStream* in_stream, * out_stream;
+        ret = av_read_frame(ifmt_ctx, pkt);
+
+        if (ret < 0)
+        {
+            break;
+        }
+
+        in_stream = ifmt_ctx->streams[pkt->stream_index];
+        if (pkt->stream_index >= ifmt_ctx->nb_streams ||
+            stream_mapping[pkt->stream_index] < 0) {
+            av_packet_unref(pkt);
+            continue;
+        }
+
+        pkt->stream_index = stream_mapping[pkt->stream_index];
+
+        AVRational default_timebase;
+        default_timebase.num = 1;
+        default_timebase.den = AV_TIME_BASE;
+
+        int64_t starttime_int64 = av_rescale_q((int64_t)(10 * AV_TIME_BASE), default_timebase, in_stream->time_base);
+        int64_t endtime_int64 = av_rescale_q((int64_t)(20 * AV_TIME_BASE), default_timebase, in_stream->time_base);
+
+        if (avformat_seek_file(ifmt_ctx, streamVideoIndex, INT64_MIN, starttime_int64, INT64_MAX, 0) < 0) {
+            return false;
+        }
+    }
+
+    /*
     while (1)
     {
         AVStream* in_stream, * out_stream;
@@ -141,16 +196,43 @@ bool ffmpegSample()
         out_stream = ofmt_ctx->streams[pkt->stream_index];
         out_stream->duration = 20;
 
-        av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
+        pkt->pts;
+
+        if (dts_start_from[pkt->stream_index] == 0)
+        {
+            dts_start_from[pkt->stream_index] = pkt->dts;
+        }
+        if (pts_start_from[pkt->stream_index] == 0)
+        {
+            pts_start_from[pkt->stream_index] = pkt->pts;
+        }
+        pkt->pts = av_rescale_q_rnd(pkt->pts - pts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
+        pkt->dts = av_rescale_q_rnd(pkt->dts - pts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
+        if (pkt->pts < 0) {
+            pkt->pts = 0;
+        }
+        if (pkt->dts < 0) {
+            pkt->dts = 0;
+        }
+        pkt->duration = (int)av_rescale_q((int64_t)pkt->duration, in_stream->time_base, out_stream->time_base);
+
+        //av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
+        //pkt->pts = av_rescale_q_rnd(pkt->pts, in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
+        //pkt->dts = av_rescale_q_rnd(pkt->dts, in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
+        //pkt->duration = av_rescale_q(pkt->duration, (AVRational) { 1, 60 }, out_stream->time_base);
         pkt->pos = -1;
 
         ret = av_interleaved_write_frame(ofmt_ctx, pkt);
-
         if (ret < 0)
         {
             return false;
         }
     }
+    */
+
+    
+
+    
 
     av_write_trailer(ofmt_ctx);
 
@@ -162,6 +244,27 @@ bool ffmpegSample()
         avio_closep(&ofmt_ctx->pb);
     }
     avformat_free_context(ofmt_ctx);
+
+    return true;
+};
+
+bool ffmpegConvertAndCut(char *file, float startTime, float endTime)
+{
+    AVFrame* frame;
+    AVPacket inPacket, outPacket;
+    AVIOContext* outFormatContext;
+
+    if (avio_open(&outFormatContext, file, AVIO_FLAG_WRITE) < 0) {
+        fprintf(stderr, "convert(): cannot open out file\n");
+        return false;
+    }
+
+    AVRational default_timebase;
+    default_timebase.num = 1;
+    default_timebase.den = AV_TIME_BASE;
+
+    //int64_t starttime_int64 = av_rescale_q((int64_t)(startTime * AV_TIME_BASE), default_timebase, inVideoStream->time_base);
+    //int64_t endtime_int64 = av_rescale_q((int64_t)(endTime * AV_TIME_BASE), default_timebase, inVideoStream->time_base);
 
     return true;
 };
@@ -191,6 +294,12 @@ int main()
     //system("ffmpeg -ss 00:20:00 -to 00:30:00 -i X:\\2024-07-09_19-57-00.mkv -c copy X:\\proof.webm");
 
     ffmpegSample();
+    //std::string fileName = "X:\\2024-07-12_02-41-37.mkv";
+    //char* cstr = fileName.data();
+    //float start = 10;
+    //float end = 20;
+    //ffmpegConvertAndCut(cstr, start, end);
+
 
     
     
