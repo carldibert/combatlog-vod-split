@@ -10,3 +10,8 @@ class video_file
         video_file(std::string file);
 };
 
+class output_video
+{
+    public:
+        std::string fileName;
+};
