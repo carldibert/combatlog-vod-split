@@ -1,5 +1,2 @@
 ﻿  combatlog-vod-split.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(76,23): warning C4018: '<': signed/unsigned mismatch
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(85,23): warning C4018: '<': signed/unsigned mismatch
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(60,14): warning C4101: 'i': unreferenced local variable
   combatlog-vod-split.vcxproj -> D:\Documents\Workspace\combatlog-vod-split\bin\combatlog-vod-split.exe
