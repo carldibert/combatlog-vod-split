@@ -11,13 +11,6 @@
 #include "encounters.h"
 #include "video_file.h"
 
-extern "C"
-{
-#include <libavformat/avformat.h>
-#include <libavutil/dict.h>
-#include <libavcodec/avcodec.h>
-}
-
 //for threading processing of logs 
 void ProcessLogs(file_handling* files, std::string logFile)
 {
@@ -47,8 +40,8 @@ int main()
     Encounters_Total fights(files.contents);
 
     
-
-    system("ffmpeg -ss 00:20:00 -to 00:30:00 -i X:\\2024-07-09_19-57-00.mkv -c copy X:\\proof.webm");
+    //system call for if I want to be lazy and not actually implement the ffmpeg library cause I know this works
+    //system("ffmpeg -ss 00:20:00 -to 00:30:00 -i X:\\2024-07-09_19-57-00.mkv -c copy X:\\proof.webm");
 
     
     
