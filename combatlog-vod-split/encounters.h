@@ -41,7 +41,8 @@ class Encounters_Ordered
 class Encounters_Total
 {
     public:
-        std::string name;
-        std::string difficulty;
-        std::vector<Encounters_Ordered> fights;
+        Encounters_Total(std::vector<combat_log> contents);
+    private:
+        std::vector<encounters> encounterList;
+        std::vector<Encounters_Ordered> orderedEncounters;
 };

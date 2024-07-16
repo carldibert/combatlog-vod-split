@@ -138,11 +138,13 @@
     <ClCompile Include="encounters.cpp" />
     <ClCompile Include="ffmpeg.cpp" />
     <ClCompile Include="file_handling.cpp" />
+    <ClCompile Include="video_file.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="encounters.h" />
     <ClInclude Include="ffmpeg.h" />
     <ClInclude Include="file_handling.h" />
+    <ClInclude Include="video_file.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

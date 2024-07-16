@@ -137,14 +137,6 @@ bool combat_log::ReadFile(std::string fileName)
 {
     //gathers filename and creation date of text file
     this->fileName = fileName;
-    std::wstring stemp = std::wstring(fileName.begin(), fileName.end());
-    WIN32_FILE_ATTRIBUTE_DATA fInfo;
-    GetFileAttributesEx(stemp.c_str(), GetFileExInfoStandard, &fInfo);
-    SYSTEMTIME FileTime = { 0 };
-    SYSTEMTIME OutFileTimeLocal = { 0 };
-    FileTimeToSystemTime(&fInfo.ftCreationTime, &FileTime);
-    SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &OutFileTimeLocal);
-    this->createDate = OutFileTimeLocal;
 
     int line = 1;
     std::string combatLogActiveLine;
