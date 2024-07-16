@@ -44,7 +44,6 @@ public:
     std::string dungeonName;
     bool keyChested;
     bool isOpenWorld;
-    combat_log_events();
     combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget);
 private:
     

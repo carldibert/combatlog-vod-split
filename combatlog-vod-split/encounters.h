@@ -1,6 +1,7 @@
 #pragma once
-#include <string>
 #include "file_handling.h"
+#include <vector>
+#include <string>
 
 enum InstanceType
 {
@@ -18,7 +19,8 @@ class encounters
         std::string date;
         LogEventType eventType;
         std::string dungeonName;
-        encounters();       
+        std::string difficulty;
+        int keyLevel;     
 };
 
 class Encounters_Ordered
@@ -29,5 +31,17 @@ class Encounters_Ordered
         std::string startTime;
         std::string endTime;
         std::string zone;
+        std::string difficulty;
+        int fightNumber;
+        int keyLevel;
+        bool processed;
         Encounters_Ordered();
+};
+
+class Encounters_Total
+{
+    public:
+        std::string name;
+        std::string difficulty;
+        std::vector<Encounters_Ordered> fights;
 };

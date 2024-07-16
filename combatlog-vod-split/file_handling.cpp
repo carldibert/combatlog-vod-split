@@ -61,11 +61,6 @@ DifficultyType convertToDifficultyTypeEnum (std::string& diff)
     }
 };
 
-combat_log_events::combat_log_events()
-{
-
-};
-
 combat_log_events::combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget)
 {
     this->date = initDate;

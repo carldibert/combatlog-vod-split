@@ -1,12 +1,9 @@
 #include "encounters.h"
 #include "file_handling.h"
-
-encounters::encounters()
-{
-
-};
+#include <vector>
+#include <string>
 
 Encounters_Ordered::Encounters_Ordered()
 {
-
+    processed = false;
 };

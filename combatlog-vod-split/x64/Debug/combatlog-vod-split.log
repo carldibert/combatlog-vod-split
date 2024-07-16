@@ -1,2 +1,3 @@
 ﻿  combatlog-vod-split.cpp
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(36,1): warning C4715: 'GetDifficultyName': not all control paths return a value
   combatlog-vod-split.vcxproj -> D:\Documents\Workspace\combatlog-vod-split\bin\combatlog-vod-split.exe

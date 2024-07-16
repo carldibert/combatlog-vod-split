@@ -7,11 +7,32 @@
 #include "file_handling.h"
 #include "encounters.h"
 #include <windows.h>
+#include <algorithm>
 
 extern "C"
 {
 #include <libavformat/avformat.h>
 #include <libavutil/dict.h>
+}
+
+//get difficulty name
+std::string GetDifficultyName(DifficultyType diff)
+{
+    switch(diff)
+    {
+        case 14:
+            return "Normal";
+            break;
+        case 15:
+            return "Heroic";
+            break;
+        case 16:
+            return "Mythic";
+            break;
+        case 17:
+            return "LFR";
+            break;
+    }
 }
 
 //for threading processing of logs 
@@ -20,7 +41,6 @@ void ProcessLogs(file_handling* files, std::string logFile)
     combat_log log(files->exePath);
     log.ReadFile(logFile);
     files->contents.push_back(log);
-    //files->contents.insert(std::pair<std::string, combat_log>(logFile, log));
 }
 
 //populates the encounter list in a more sanitized format
@@ -40,6 +60,7 @@ void PopulateEncounterList(std::vector<encounters>* encounterList, std::vector<c
             {
                 tmp.instanceType = Dungeon;
                 tmp.dungeonName = evnt.dungeonName;
+                tmp.keyLevel = evnt.keyLevel;
             }
             else if (evnt.logAction == 4)
             {
@@ -48,6 +69,7 @@ void PopulateEncounterList(std::vector<encounters>* encounterList, std::vector<c
             else if (evnt.difficulty == 14 || evnt.difficulty == 15 || evnt.difficulty == 16 || evnt.difficulty == 17)
             {
                 tmp.instanceType = Raid;
+                tmp.difficulty = GetDifficultyName(evnt.difficulty);
             }
             tmp.time = evnt.time;
             tmp.date = evnt.date;
@@ -69,6 +91,7 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
             if (var.eventType == 0)
             {
                 tmp.startTime = var.time;
+                tmp.difficulty = var.difficulty;
             }
             else if (var.eventType == 1 && tmp.startTime != "")
             {
@@ -86,6 +109,7 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
             {
                 tmp.startTime = var.time;
                 tmp.name = var.dungeonName;
+                tmp.keyLevel = var.keyLevel;
                 currentZone = var.dungeonName;
             }
             else if (var.eventType == 4 && tmp.startTime != "")
@@ -101,11 +125,28 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
         {
             tmp.zone = currentZone;
             tmp.date = var.date;
+            if (orderedEncounters->size() > 0)
+            {
+                int fightNumber = 1;
+                for (auto& comp : *orderedEncounters)
+                {
+                    if (comp.name == tmp.name && comp.difficulty == tmp.difficulty)
+                    {
+                        fightNumber++;
+                    }
+                }
+                tmp.fightNumber = fightNumber;
+            }
+            else
+            {
+                tmp.fightNumber = 1;
+            }
+            
             orderedEncounters->push_back(tmp);
             tmp = Encounters_Ordered();
         }
     }
-}
+};
 
 int main()
 {
@@ -128,16 +169,13 @@ int main()
     //gathers info from list and sanitizes the data
     std::vector<encounters> encounterList;
     PopulateEncounterList(&encounterList, files.contents);
-    
+
     //orders encounters with their appropriate start and end times + dates
     std::vector<Encounters_Ordered> orderedEncounters;
     OrderEncounters(&orderedEncounters, encounterList);
     
 
-
-
-
     return 0;
 
 
-}
+};
