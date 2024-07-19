@@ -34,42 +34,56 @@ bool ffmpegSample()
     const char* in_filename, * out_filename;
     int ret, i;
     int stream_index = 0;
-    //int* stream_mapping = NULL;
     int stream_mapping_size = 0;
-    int streamVideoIndex = 0;
 
-    in_filename = "X:\\2024-07-12 02-39-33 - Copy.mkv";
-    out_filename = "X:\\output.mp4";
+    //used for testing purposes to hard code some values
+    double from_seconds = 5;
+    double end_seconds = 15;
 
+    //hard coded file paths for testing
+    in_filename = "X:\\input.mkv";
+    out_filename = "X:\\output.mkv";
+
+    //reserving memory for packet
     pkt = av_packet_alloc();
 
+    //if packet is unable to be allocated returns a failure
     if (!pkt)
     {
+        std::cout << "Error allocating space for packet" << std::endl;
         return false;
     }
 
+    //opens file and if unable to open return failure
     if ((ret = avformat_open_input(&ifmt_ctx, in_filename, 0, 0)) < 0)
     {
+        std::string errorString = in_filename;
+        std::cout << "Error opening file: " + errorString << std::endl;
         return false;
     }
 
+    //retrieves input stream information
     if ((ret = avformat_find_stream_info(ifmt_ctx, 0)) < 0)
     {
+        std::cout << "Failed to retrieve input stream information" << std::endl;
         return false;
     }
 
     av_dump_format(ifmt_ctx, 0, in_filename, 0);
 
+    //created output context
     avformat_alloc_output_context2(&ofmt_ctx, NULL, NULL, out_filename);
     if (!ofmt_ctx)
     {
+        std::cout << "Error creating output context" << std::endl;
         return false;
     }
 
-    stream_mapping_size = ifmt_ctx->nb_streams;
-    int* stream_mapping = new int[stream_mapping_size];
+    //gathers stream mapping information for all available streams
+    int* stream_mapping = new int[ifmt_ctx->nb_streams];
     if (!stream_mapping)
     {
+        std::cout << "Error allocating memory for streams" << std::endl;
         return false;
     }
 
@@ -88,115 +102,70 @@ bool ffmpegSample()
             continue;
         }
 
-        if (in_codecpar->codec_type != AVMEDIA_TYPE_VIDEO)
-        {
-            streamVideoIndex = i;
-        }
-
         stream_mapping[i] = stream_index++;
 
+        //formats output streams
         out_stream = avformat_new_stream(ofmt_ctx, NULL);
-
         if (!out_stream)
         {
+            std::cout << "Error formatting output streams" << std::endl;
             return false;
         }
 
+        //copies input codecs to output file
         ret = avcodec_parameters_copy(out_stream->codecpar, in_codecpar);
         if (ret < 0)
         {
+            std::cout << "Error copying streams to output file" << std::endl;
             return false;
         }
         out_stream->codecpar->codec_tag = 0;
     }
+    //outputs formatting of output file
     av_dump_format(ofmt_ctx, 0, out_filename, 1);
 
+    //attempts to write flags to output file
     if (!(ofmt->flags & AVFMT_NOFILE))
     {
         ret = avio_open(&ofmt_ctx->pb, out_filename, AVIO_FLAG_WRITE);
         if (ret < 0)
         {
+            std::cout << "Error opening file" << std::endl;
             return false;
         }
     }
 
+    //reformats output header
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0)
     {
+        std::cout << "Error reformatting output header" << std::endl;
         return false;
     }
 
-    int64_t* dts_start_from = new int64_t[stream_mapping_size];
+    int64_t* dts_start_from = new int64_t[ifmt_ctx->nb_streams];
+    int64_t* pts_start_from = new int64_t[ifmt_ctx->nb_streams];
     memset(dts_start_from, 0, sizeof(int64_t) * ifmt_ctx->nb_streams);
-    int64_t* pts_start_from = new int64_t[stream_mapping_size];
     memset(pts_start_from, 0, sizeof(int64_t) * ifmt_ctx->nb_streams);
-    
-
-    AVFrame* frame;
-    AVPacket inPacket, outPacket;
-    AVIOContext* outFormatContext;
-
-    if (avio_open(&outFormatContext, in_filename, AVIO_FLAG_WRITE) < 0) {
-        fprintf(stderr, "convert(): cannot open out file\n");
-        return false;
-    }
-
-    
 
     while (1)
     {
         AVStream* in_stream, * out_stream;
-        ret = av_read_frame(ifmt_ctx, pkt);
 
+        ret = av_read_frame(ifmt_ctx, pkt);
         if (ret < 0)
         {
             break;
         }
 
         in_stream = ifmt_ctx->streams[pkt->stream_index];
-        if (pkt->stream_index >= ifmt_ctx->nb_streams ||
-            stream_mapping[pkt->stream_index] < 0) {
-            av_packet_unref(pkt);
-            continue;
-        }
-
-        pkt->stream_index = stream_mapping[pkt->stream_index];
-
-        AVRational default_timebase;
-        default_timebase.num = 1;
-        default_timebase.den = AV_TIME_BASE;
-
-        int64_t starttime_int64 = av_rescale_q((int64_t)(10 * AV_TIME_BASE), default_timebase, in_stream->time_base);
-        int64_t endtime_int64 = av_rescale_q((int64_t)(20 * AV_TIME_BASE), default_timebase, in_stream->time_base);
-
-        if (avformat_seek_file(ifmt_ctx, streamVideoIndex, INT64_MIN, starttime_int64, INT64_MAX, 0) < 0) {
-            return false;
-        }
-    }
-
-    /*
-    while (1)
-    {
-        AVStream* in_stream, * out_stream;
-        ret = av_read_frame(ifmt_ctx, pkt);
-
-        if (ret < 0)
-        {
-            break;
-        }
-
-        in_stream = ifmt_ctx->streams[pkt->stream_index];
-        if (pkt->stream_index >= ifmt_ctx->nb_streams ||
-            stream_mapping[pkt->stream_index] < 0) {
-            av_packet_unref(pkt);
-            continue;
-        }
-
-        pkt->stream_index = stream_mapping[pkt->stream_index];
         out_stream = ofmt_ctx->streams[pkt->stream_index];
-        out_stream->duration = 20;
 
-        pkt->pts;
+        if (av_q2d(in_stream->time_base) * pkt->pts > end_seconds)
+        {
+            av_packet_unref(pkt);
+            break;
+        }
 
         if (dts_start_from[pkt->stream_index] == 0)
         {
@@ -206,33 +175,30 @@ bool ffmpegSample()
         {
             pts_start_from[pkt->stream_index] = pkt->pts;
         }
-        pkt->pts = av_rescale_q_rnd(pkt->pts - pts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
-        pkt->dts = av_rescale_q_rnd(pkt->dts - pts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
-        if (pkt->pts < 0) {
+
+        pkt->pts = av_rescale_q_rnd(pkt->pts - pts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_PASS_MINMAX);
+        pkt->dts = av_rescale_q_rnd(pkt->dts - dts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_PASS_MINMAX);
+        if (pkt->pts < 0)
+        {
             pkt->pts = 0;
         }
-        if (pkt->dts < 0) {
+        if (pkt->dts < 0)
+        {
             pkt->dts = 0;
         }
         pkt->duration = (int)av_rescale_q((int64_t)pkt->duration, in_stream->time_base, out_stream->time_base);
-
-        //av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
-        //pkt->pts = av_rescale_q_rnd(pkt->pts, in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
-        //pkt->dts = av_rescale_q_rnd(pkt->dts, in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF);
-        //pkt->duration = av_rescale_q(pkt->duration, (AVRational) { 1, 60 }, out_stream->time_base);
         pkt->pos = -1;
 
         ret = av_interleaved_write_frame(ofmt_ctx, pkt);
         if (ret < 0)
         {
-            return false;
+            std::cout << "Error muxing packet" << std::endl;
+            break;
         }
+        av_packet_unref(pkt);
     }
-    */
-
-    
-
-    
+    delete[] dts_start_from;
+    delete[] pts_start_from;
 
     av_write_trailer(ofmt_ctx);
 
@@ -244,27 +210,6 @@ bool ffmpegSample()
         avio_closep(&ofmt_ctx->pb);
     }
     avformat_free_context(ofmt_ctx);
-
-    return true;
-};
-
-bool ffmpegConvertAndCut(char *file, float startTime, float endTime)
-{
-    AVFrame* frame;
-    AVPacket inPacket, outPacket;
-    AVIOContext* outFormatContext;
-
-    if (avio_open(&outFormatContext, file, AVIO_FLAG_WRITE) < 0) {
-        fprintf(stderr, "convert(): cannot open out file\n");
-        return false;
-    }
-
-    AVRational default_timebase;
-    default_timebase.num = 1;
-    default_timebase.den = AV_TIME_BASE;
-
-    //int64_t starttime_int64 = av_rescale_q((int64_t)(startTime * AV_TIME_BASE), default_timebase, inVideoStream->time_base);
-    //int64_t endtime_int64 = av_rescale_q((int64_t)(endTime * AV_TIME_BASE), default_timebase, inVideoStream->time_base);
 
     return true;
 };
@@ -289,16 +234,7 @@ int main()
 
     Encounters_Total fights(files.contents);
 
-    
-    //system call for if I want to be lazy and not actually implement the ffmpeg library cause I know this works
-    //system("ffmpeg -ss 00:20:00 -to 00:30:00 -i X:\\2024-07-09_19-57-00.mkv -c copy X:\\proof.webm");
-
     ffmpegSample();
-    //std::string fileName = "X:\\2024-07-12_02-41-37.mkv";
-    //char* cstr = fileName.data();
-    //float start = 10;
-    //float end = 20;
-    //ffmpegConvertAndCut(cstr, start, end);
 
 
     
