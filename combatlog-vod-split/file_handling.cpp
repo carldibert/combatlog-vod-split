@@ -17,6 +17,7 @@ file_handling::file_handling()
     this->exePath = GetExeDirectory();
 };
 
+//old and unused for testing
 bool file_handling::CheckForLogFiles()
 {
     for(const auto& entry : std::filesystem::directory_iterator(exePath.generic_string()))
@@ -27,6 +28,21 @@ bool file_handling::CheckForLogFiles()
         }
     }
 
+    return true;
+};
+
+bool file_handling::CheckForLogFiles(std::string directory)
+{
+    for (const auto& entry : std::filesystem::directory_iterator(directory))
+    {
+        if (entry.path().extension() == ".txt")
+        {
+            if (entry.path().generic_string().find("WoWCombatLog") != std::string::npos)
+            {
+                logFiles.push_back(entry.path().generic_string());
+            }
+        }
+    }
     return true;
 };
 

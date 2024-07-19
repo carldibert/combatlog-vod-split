@@ -1,6 +1,16 @@
 #include "ffmpeg.h"
 #include <string>
 #include <iostream>
+#include <stdlib.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <thread>
+#include <map>
+#include <stdlib.h>
+#include <windows.h>
+#include <algorithm>
 
 
 extern "C"
@@ -14,11 +24,11 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
     const AVOutputFormat* ofmt = NULL;
     AVFormatContext* ifmt_ctx = NULL, * ofmt_ctx = NULL;
     AVPacket* pkt = NULL;
-    const char* in_filename, * out_filename;
     int ret, i;
     int stream_index = 0;
     int stream_mapping_size = 0;
 
+    //const char* in_filename, * out_filename;
     //used for testing purposes to hard code some values
     //double from_seconds = 5;
     //double end_seconds = 15;

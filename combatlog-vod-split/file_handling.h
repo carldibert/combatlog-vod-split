@@ -66,7 +66,9 @@ class file_handling
 {
 public:
 	file_handling();
+    //unused just for testing
     bool CheckForLogFiles();
+    bool CheckForLogFiles(std::string directory);
     std::filesystem::path exePath;
     std::vector<std::string> logFiles;
     std::vector<combat_log> contents;
