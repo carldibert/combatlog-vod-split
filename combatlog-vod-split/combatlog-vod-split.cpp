@@ -25,6 +25,7 @@ void ProcessLogs(file_handling* files, std::string logFile)
 void SplitVideo(std::string in_filename, std::string out_filename, double from_seconds, double end_seconds, ffmpeg* proc)
 {
     proc->ProcessFile(in_filename.c_str(), out_filename.c_str(), from_seconds, end_seconds);
+    //proc->ProcessFile("X:\\2023-12-05_22-42-38.mkv", "X:\\sample.mkv", 20, 40);
 }
 
 //checks to see if vod is within the combat log windows

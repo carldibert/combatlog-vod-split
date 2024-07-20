@@ -21,6 +21,145 @@ extern "C"
 
 bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, double from_seconds, double end_seconds)
 {
+    int operationResult;
+
+    AVPacket* avPacket = NULL;
+    AVFormatContext* avInputFormatContext = NULL;
+    AVFormatContext* avOutputFormatContext = NULL;
+
+    avPacket = av_packet_alloc();
+    if (!avPacket) {
+        //qCritical("Failed to allocate AVPacket.");
+        return false;
+    }
+
+    try {
+        operationResult = avformat_open_input(&avInputFormatContext, in_filename, 0, 0);
+        if (operationResult < 0) {
+            //throw std::runtime_error(QString("Failed to open the input file '%1'.").arg(inputFilePath).toStdString().c_str());
+        }
+
+        operationResult = avformat_find_stream_info(avInputFormatContext, 0);
+        if (operationResult < 0) {
+            //throw std::runtime_error(QString("Failed to retrieve the input stream information.").toStdString().c_str());
+        }
+
+        avformat_alloc_output_context2(&avOutputFormatContext, NULL, NULL, out_filename);
+        if (!avOutputFormatContext) {
+            operationResult = AVERROR_UNKNOWN;
+            //throw std::runtime_error(QString("Failed to create the output context.").toStdString().c_str());
+        }
+
+        int streamIndex = 0;
+        int* streamMapping = new int[avInputFormatContext->nb_streams];
+        int* streamRescaledStartSeconds = new int[avInputFormatContext->nb_streams];
+        int* streamRescaledEndSeconds = new int[avInputFormatContext->nb_streams];
+
+        // Copy streams from the input file to the output file.
+        for (int i = 0; i < avInputFormatContext->nb_streams; i++) {
+            AVStream* outStream;
+            AVStream* inStream = avInputFormatContext->streams[i];
+
+            streamRescaledStartSeconds[i] = av_rescale_q(from_seconds * AV_TIME_BASE, AV_TIME_BASE_Q, inStream->time_base);
+            streamRescaledEndSeconds[i] = av_rescale_q(end_seconds * AV_TIME_BASE, AV_TIME_BASE_Q, inStream->time_base);
+
+            if (inStream->codecpar->codec_type != AVMEDIA_TYPE_AUDIO &&
+                inStream->codecpar->codec_type != AVMEDIA_TYPE_VIDEO &&
+                inStream->codecpar->codec_type != AVMEDIA_TYPE_SUBTITLE) {
+                streamMapping[i] = -1;
+                continue;
+            }
+
+            streamMapping[i] = streamIndex++;
+
+            outStream = avformat_new_stream(avOutputFormatContext, NULL);
+            if (!outStream) {
+                operationResult = AVERROR_UNKNOWN;
+                //throw std::runtime_error(QString("Failed to allocate the output stream.").toStdString().c_str());
+            }
+
+            operationResult = avcodec_parameters_copy(outStream->codecpar, inStream->codecpar);
+            if (operationResult < 0) {
+                //throw std::runtime_error(
+                    //QString("Failed to copy codec parameters from input stream to output stream.").toStdString().c_str());
+            }
+            outStream->codecpar->codec_tag = 0;
+        }
+
+        if (!(avOutputFormatContext->oformat->flags & AVFMT_NOFILE)) {
+            operationResult = avio_open(&avOutputFormatContext->pb, out_filename, AVIO_FLAG_WRITE);
+            if (operationResult < 0) {
+                //throw std::runtime_error(
+                    //QString("Failed to open the output file '%1'.").arg(outputFilePath).toStdString().c_str());
+            }
+        }
+
+        operationResult = avformat_write_header(avOutputFormatContext, NULL);
+        if (operationResult < 0) {
+            //throw std::runtime_error(QString("Error occurred when opening output file.").toStdString().c_str());
+        }
+
+        operationResult = avformat_seek_file(avInputFormatContext, -1, INT64_MIN, from_seconds * AV_TIME_BASE,
+            from_seconds * AV_TIME_BASE, 0);
+        if (operationResult < 0) {
+            //throw std::runtime_error(
+                //QString("Failed to seek the input file to the targeted start position.").toStdString().c_str());
+        }
+
+        while (true) {
+            operationResult = av_read_frame(avInputFormatContext, avPacket);
+            if (operationResult < 0) break;
+
+            // Skip packets from unknown streams and packets after the end cut position.
+            if (avPacket->stream_index >= avInputFormatContext->nb_streams || streamMapping[avPacket->stream_index] < 0 ||
+                avPacket->pts > streamRescaledEndSeconds[avPacket->stream_index]) {
+                av_packet_unref(avPacket);
+                continue;
+            }
+
+            avPacket->stream_index = streamMapping[avPacket->stream_index];
+            //logPacket(avInputFormatContext, avPacket, "in");
+
+            // Shift the packet to its new position by subtracting the rescaled start seconds.
+            avPacket->pts -= streamRescaledStartSeconds[avPacket->stream_index];
+            avPacket->dts -= streamRescaledStartSeconds[avPacket->stream_index];
+
+            av_packet_rescale_ts(avPacket, avInputFormatContext->streams[avPacket->stream_index]->time_base,
+                avOutputFormatContext->streams[avPacket->stream_index]->time_base);
+            avPacket->pos = -1;
+            //logPacket(avOutputFormatContext, avPacket, "out");
+
+            operationResult = av_interleaved_write_frame(avOutputFormatContext, avPacket);
+            if (operationResult < 0) {
+                //throw std::runtime_error(QString("Failed to mux the packet.").toStdString().c_str());
+            }
+        }
+
+        av_write_trailer(avOutputFormatContext);
+    }
+    catch (std::runtime_error e) {
+        //qCritical("%s", e.what());
+    }
+
+    av_packet_free(&avPacket);
+
+    avformat_close_input(&avInputFormatContext);
+
+    if (avOutputFormatContext && !(avOutputFormatContext->oformat->flags & AVFMT_NOFILE))
+        avio_closep(&avOutputFormatContext->pb);
+    avformat_free_context(avOutputFormatContext);
+
+    if (operationResult < 0 && operationResult != AVERROR_EOF) {
+        //qCritical("%s", QString("Error occurred: %1.").arg(av_err2str(operationResult)).toStdString().c_str());
+        return false;
+    }
+
+    return true;
+};
+
+/*
+bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, double from_seconds, double end_seconds)
+{
     const AVOutputFormat* ofmt = NULL;
     AVFormatContext* ifmt_ctx = NULL, * ofmt_ctx = NULL;
     AVPacket* pkt = NULL;
@@ -212,6 +351,10 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
 
     return true;
 }
+
+*/
+
+
 
 int64_t ffmpeg::GetDuration(const char* filename)
 {
