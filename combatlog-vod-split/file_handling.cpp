@@ -31,6 +31,7 @@ bool file_handling::CheckForLogFiles()
     return true;
 };
 
+//checks directory for combatlog files
 bool file_handling::CheckForLogFiles(std::string directory)
 {
     for (const auto& entry : std::filesystem::directory_iterator(directory))
@@ -41,6 +42,19 @@ bool file_handling::CheckForLogFiles(std::string directory)
             {
                 logFiles.push_back(entry.path().generic_string());
             }
+        }
+    }
+    return true;
+};
+
+//checks directory for vod files
+bool file_handling::CheckForVodFiles(std::string directory)
+{
+    for (const auto& entry : std::filesystem::directory_iterator(directory))
+    {
+        if (entry.path().extension() == ".mkv")
+        {
+            vodFiles.push_back(entry.path().generic_string());
         }
     }
     return true;

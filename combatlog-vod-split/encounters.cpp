@@ -71,7 +71,7 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
     std::string currentZone;
     for (auto& var : encounterList)
     {
-        if (var.instanceType == 0)
+        if (var.instanceType == 0 || var.instanceType == 2)
         {
             if (var.eventType == 0)
             {

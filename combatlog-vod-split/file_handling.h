@@ -69,8 +69,10 @@ public:
     //unused just for testing
     bool CheckForLogFiles();
     bool CheckForLogFiles(std::string directory);
+    bool CheckForVodFiles(std::string directory);
     std::filesystem::path exePath;
     std::vector<std::string> logFiles;
+    std::vector<std::string> vodFiles;
     std::vector<combat_log> contents;
 private:
     std::filesystem::path GetExeDirectory();

@@ -41,8 +41,8 @@ class Encounters_Ordered
 class Encounters_Total
 {
     public:
+        std::vector<Encounters_Ordered> orderedEncounters;
         Encounters_Total(std::vector<combat_log> contents);
     private:
-        std::vector<encounters> encounterList;
-        std::vector<Encounters_Ordered> orderedEncounters;
+        std::vector<encounters> encounterList;      
 };

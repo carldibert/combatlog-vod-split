@@ -7,11 +7,9 @@ class video_file
     public:
         std::string fileName;
         SYSTEMTIME fileCreateTime;
-        video_file(std::string file);
-};
-
-class output_video
-{
-    public:
-        std::string fileName;
+        std::string startTime;
+        std::string endTime;
+        std::string date;
+        int64_t duration;
+        video_file(std::string file, int64_t dur);        
 };

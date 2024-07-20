@@ -207,3 +207,13 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
 
     return true;
 }
+
+int64_t ffmpeg::GetDuration(const char* filename)
+{
+    AVFormatContext* pFormatCtx = avformat_alloc_context();
+    avformat_open_input(&pFormatCtx, filename, NULL, NULL);
+    int64_t duration = pFormatCtx->duration;
+    avformat_close_input(&pFormatCtx);
+    avformat_free_context(pFormatCtx);
+    return duration;
+};

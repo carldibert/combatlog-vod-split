@@ -2,7 +2,7 @@
 #include <string>
 #include <windows.h>
 
-video_file::video_file(std::string file)
+video_file::video_file(std::string file, int64_t dur)
 {
     this->fileName = file;
     LPCSTR getString = fileName.c_str();
@@ -13,4 +13,5 @@ video_file::video_file(std::string file)
     FileTimeToSystemTime(&attrs.ftCreationTime, &FileTime);
     SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &OutFileTimeLocal);
     this->fileCreateTime = OutFileTimeLocal;
+    this->duration = dur;
 };
