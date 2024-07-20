@@ -64,6 +64,101 @@ void PopulateEncounterList(std::vector<encounters>* encounterList, std::vector<c
     }
 };
 
+std::vector<int> SplitString(std::string str, char splitter)
+{
+    std::vector<int> result;
+    std::string current = "";
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == splitter)
+        {
+            if (current != "")
+            {
+                result.push_back(stoi(current));
+                current = "";
+            }
+            continue;
+        }
+        current += str[i];
+    }
+
+    if (current.size() != 0)
+    {
+        result.push_back(stoi(current));
+    }
+
+    return result;
+};
+
+std::vector<int> SplitString(std::string str, char splitter, char splitter2)
+{
+    std::vector<int> result;
+    std::string current = "";
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == splitter || str[i] == splitter2)
+        {
+            if (current != "")
+            {
+                result.push_back(stoi(current));
+                current = "";
+            }
+            continue;
+        }
+        current += str[i];
+    }
+
+    if (current.size() != 0)
+    {
+        result.push_back(stoi(current));
+    }
+
+    return result;
+};
+
+void GenerateSysTime(Encounters_Ordered* temp)
+{
+    std::vector<int> startTime = SplitString(temp->startTime, ':', '.');
+    std::vector<int> endTime = SplitString(temp->endTime, ':', '.');
+    std::vector<int> dates = SplitString(temp->date, '/');
+    
+    SYSTIME start
+    {
+        0,
+        dates[0],
+        dates[1],
+        startTime[0],
+        startTime[1],
+        startTime[2],
+        startTime[3]
+    };
+    SYSTIME end
+    {
+        0,
+        dates[0],
+        dates[1],
+        endTime[0],
+        endTime[1],
+        endTime[2],
+        endTime[3]
+    };
+    temp->start = start;
+    temp->end = end;
+    
+    //gets fight duration in seconds
+    int tmpEndHour;
+    if (end.wHour == 0 && start.wHour == 23)
+    {
+        tmpEndHour = 24;
+    }
+    else
+    {
+        tmpEndHour = end.wHour;
+    }
+
+    temp->duration = ((tmpEndHour - start.wHour) * 60) + ((end.wMinute - start.wMinute) * 60) + (end.wSecond - start.wSecond);
+};
+
 //orders encounters with their appropriate start and end times + dates
 void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::vector<encounters>encounterList)
 {
@@ -126,8 +221,13 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
             {
                 tmp.fightNumber = 1;
             }
-            
-            orderedEncounters->push_back(tmp);
+
+            //generates time of encounters and does not add in fights shorter than 5 seconds for boss resets
+            GenerateSysTime(&tmp);
+            if (tmp.duration > 5)
+            {
+                orderedEncounters->push_back(tmp);
+            } 
             tmp = Encounters_Ordered();
         }
     }

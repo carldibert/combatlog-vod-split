@@ -1,15 +1,27 @@
 #pragma once
 #include <string>
 #include <windows.h>
+#include <cstdlib>
+
+struct SYSTIME
+{
+    WORD wYear;
+    WORD wMonth;
+    WORD wDay;
+    WORD wHour;
+    WORD wMinute;
+    WORD wSecond;
+    WORD wMilliseconds;
+};
 
 class video_file
 {
     public:
         std::string fileName;
-        SYSTEMTIME fileCreateTime;
-        std::string startTime;
-        std::string endTime;
+        SYSTIME startTime;
+        SYSTIME endTime;
         std::string date;
         int64_t duration;
-        video_file(std::string file, int64_t dur);        
+        video_file(std::string file, int64_t dur);
+        SYSTIME GetEndTime(float seconds);
 };

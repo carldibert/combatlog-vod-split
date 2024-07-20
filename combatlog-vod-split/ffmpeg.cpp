@@ -81,11 +81,16 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
     }
 
     ofmt = ofmt_ctx->oformat;
+    //int* streamRescaledStartSeconds = new int[ifmt_ctx->nb_streams];
+    //int* streamRescaledEndSeconds = new int[ifmt_ctx->nb_streams];
 
     for (i = 0; i < ifmt_ctx->nb_streams; i++)
     {
         AVStream* out_stream;
         AVStream* in_stream = ifmt_ctx->streams[i];
+        //streamRescaledStartSeconds[i] = av_rescale_q(from_seconds * AV_TIME_BASE, AV_TIME_BASE_Q, in_stream->time_base);
+        //streamRescaledEndSeconds[i] = av_rescale_q(end_seconds * AV_TIME_BASE, AV_TIME_BASE_Q, in_stream->time_base);
+
         AVCodecParameters* in_codecpar = in_stream->codecpar;
 
         if (in_codecpar->codec_type != AVMEDIA_TYPE_AUDIO &&

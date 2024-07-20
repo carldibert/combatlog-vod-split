@@ -22,7 +22,7 @@ extern "C"
 class ffmpeg
 {
     public:
-	    bool ProcessFile(const char* in_filename, const char* out_filename, double from_seconds, double end_seconds);
+        bool ProcessFile(const char* in_filename, const char* out_filename, double from_seconds, double end_seconds);
         int64_t GetDuration(const char* filename);
 };
 

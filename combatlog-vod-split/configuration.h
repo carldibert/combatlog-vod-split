@@ -10,6 +10,7 @@ class configuration
         std::string video_directory;
         std::string log_directory;
         std::string mode;
+        int threads;
         void SetConfiguration();
         bool CheckForConfigFile();
 };

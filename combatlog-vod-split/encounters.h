@@ -1,7 +1,9 @@
 #pragma once
-#include "file_handling.h"
 #include <vector>
 #include <string>
+
+#include "file_handling.h"
+#include "video_file.h"
 
 enum InstanceType
 {
@@ -32,6 +34,13 @@ class Encounters_Ordered
         std::string endTime;
         std::string zone;
         std::string difficulty;
+        std::string inFilename;
+        std::string outFilename;
+        SYSTIME start;
+        SYSTIME end;
+        int duration;
+        double startSeconds;
+        double endSeconds;
         int fightNumber;
         int keyLevel;
         bool processed;
