@@ -54,7 +54,9 @@
 /combatlog-vod-split/x64/Debug/combatlog-vod-split.ilk
 /combatlog-vod-split/x64/Debug/vc143.idb
 /combatlog-vod-split/x64/Debug/vc143.pdb
+/x64/Debug*
 
 # stuff I added
 *.tlog
 *.txt
+/combatlog-vod-split/x64/Debug/combatlo.137f7b1b.tlog/link.read.1.tlog
