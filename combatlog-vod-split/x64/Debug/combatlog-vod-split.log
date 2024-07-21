@@ -1,3 +1,4 @@
-﻿  combatlog-vod-split.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(127,23): warning C4244: 'initializing': conversion from 'int64_t' to 'float', possible loss of data
+﻿  ffmpeg.cpp
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.cpp(92,19): warning C4018: '<': signed/unsigned mismatch
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.cpp(147,52): warning C4244: 'argument': conversion from 'double' to 'int64_t', possible loss of data
   combatlog-vod-split.vcxproj -> D:\Documents\Workspace\combatlog-vod-split\bin\combatlog-vod-split.exe
