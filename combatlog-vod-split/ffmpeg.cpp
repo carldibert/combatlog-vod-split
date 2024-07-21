@@ -33,8 +33,6 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
     int ret, i;
     int stream_index = 0;
     int stream_mapping_size = 0;
-    //from_seconds = 10;
-    //end_seconds = 20;
 
     //reserving memory for packet
     pkt = av_packet_alloc();
