@@ -22,10 +22,16 @@ void ProcessLogs(file_handling* files, std::string logFile)
 };
 
 //for threading the processing of available files
-void SplitVideo(std::string in_filename, std::string out_filename, double from_seconds, double end_seconds, ffmpeg* proc)
+bool SplitVideo(std::string in_filename, std::string out_filename, double from_seconds, double end_seconds, ffmpeg* proc)
 {
-    proc->ProcessFile(in_filename.c_str(), out_filename.c_str(), from_seconds, end_seconds);
-    //proc->ProcessFile("X:\\2023-12-05_22-42-38.mkv", "X:\\sample.mkv", 20, 40);
+    if (proc->ProcessFile(in_filename.c_str(), out_filename.c_str(), from_seconds, end_seconds))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }  
 }
 
 //checks to see if vod is within the combat log windows
@@ -53,38 +59,26 @@ bool CheckIfDatesAreValid(SYSTIME fight, SYSTIME vid)
 double GetStartOrEndPoints(SYSTIME fight, SYSTIME vid)
 {
     double running = 0;
-    if (fight.wHour != vid.wHour)
+    int extra;
+    int hours;
+    int minutes;
+    int seconds = fight.wSecond - vid.wSecond;
+    if (seconds < 0)
     {
-        if (fight.wHour < vid.wHour)
-        {
-            running += ((fight.wHour + 24) - vid.wHour) * 3600;
-        }
-        else
-        {
-            running += (fight.wHour - vid.wHour) * 3600;
-        }
+       minutes = (fight.wMinute + 1) - vid.wMinute;
     }
-    if (fight.wMinute != vid.wMinute)
+    else
     {
-        if (fight.wMinute < vid.wMinute)
-        {
-            running += ((fight.wMinute + 60) - vid.wMinute) * 60;
-        }
-        else
-        {
-            running += (fight.wMinute - vid.wMinute) * 60;
-        }
+        minutes = fight.wMinute - vid.wMinute;
     }
-    if (fight.wSecond != vid.wSecond)
+    if (minutes < 0)
     {
-        if (fight.wSecond < vid.wSecond)
-        {
-            running += ((fight.wSecond + 60) - vid.wSecond) * 60;
-        }
-        else
-        {
-            running += (fight.wSecond - vid.wSecond) * 60;
-        }
+        minutes = minutes * -1;
+        hours = (fight.wHour + 1) - vid.wHour;
+    }
+    else
+    {
+        hours = fight.wHour - vid.wHour;
     }
     return running;
 };
@@ -125,31 +119,40 @@ bool split_mode_processing(configuration* conf)
     for (auto& vid : videos)
     {
         float seconds = vid.duration / 1000000;
+        vid.durationInSeconds = vid.duration / 1000000;
         vid.date = std::to_string(vid.startTime.wMonth) + "/" + std::to_string(vid.startTime.wDay);
         vid.endTime = vid.GetEndTime(seconds);
     }
 
     //executes vod splitting in its individual threads 8 threads max as default
-    for (auto& fight : fights.orderedEncounters)
+    for (auto& vid : videos)
     {
-        for (auto& vid : videos)
+        for (auto& fight : fights.orderedEncounters)
         {
-            if (CheckIfDatesAreValid(fight.start, vid.startTime))
+            if (CheckIfDatesAreValid(fight.start, videos[0].startTime))
             {
-                fight.startSeconds = GetStartOrEndPoints(fight.start, vid.startTime);
-                fight.endSeconds = GetStartOrEndPoints(fight.end, vid.startTime);
-                fight.inFilename = vid.fileName;
+                fight.startSeconds = GetStartOrEndPoints(fight.end, videos[0].startTime);
+                fight.endSeconds = GetStartOrEndPoints(fight.start, videos[0].startTime);
+                fight.inFilename = videos[0].fileName;
                 fight.outFilename = conf->log_directory + fight.name + "_" + fight.difficulty + "_" + std::to_string(fight.fightNumber) + ".mkv";
-                break;
             }
         }
     }
+    
 
     //uses threads from config file to concurrently split files
     //I will deal with multithreading this later because its 7am and I should have gone to bed like 9 hours ago
     for (auto& fight : fights.orderedEncounters)
     {
-        SplitVideo(fight.inFilename, fight.outFilename, fight.startSeconds-15, fight.endSeconds+15, &proc);
+        if (SplitVideo(fight.inFilename, fight.outFilename, fight.startSeconds - 15, fight.startSeconds + fight.duration + 15, &proc))
+        {
+            fight.processed = true;
+        }
+        else
+        {
+            fight.processed = false;
+        }
+        
     }
 
     return true;

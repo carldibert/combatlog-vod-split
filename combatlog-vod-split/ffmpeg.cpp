@@ -33,16 +33,8 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
     int ret, i;
     int stream_index = 0;
     int stream_mapping_size = 0;
-    from_seconds = 10;
-    end_seconds = 15;
-
-    //used for testing purposes to hard code some values
-    //double from_seconds = 5;
-    //double end_seconds = 15;
-
-    //hard coded file paths for testing
-    //in_filename = "X:\\input.mkv";
-    //out_filename = "X:\\output.mkv";
+    //from_seconds = 10;
+    //end_seconds = 20;
 
     //reserving memory for packet
     pkt = av_packet_alloc();
@@ -168,45 +160,25 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
 
         in_stream = ifmt_ctx->streams[pkt->stream_index];
         out_stream = ofmt_ctx->streams[pkt->stream_index];
-        //double tmp; = av_q2d(in_stream->time_base) * pkt->pts;
-        
-        
+        double tmp = av_q2d(in_stream->time_base) * pkt->pts;
 
-        //if (av_q2d(in_stream->time_base) * pkt->pts > end_seconds)
-        //{
-            //av_packet_unref(pkt);
-            //break;
-        //}
-
-        if (dts_start_from[pkt->stream_index] == 0)
+        if (tmp < end_seconds)
         {
-            dts_start_from[pkt->stream_index] = pkt->dts;
+            pkt->stream_index = stream_mapping[pkt->stream_index];
+            out_stream = ofmt_ctx->streams[pkt->stream_index];
+            av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
+            pkt->pos = -1;
+            ret = av_interleaved_write_frame(ofmt_ctx, pkt);
+            if (ret < 0) {
+                fprintf(stderr, "Error muxing packet\n");
+                break;
+            }
         }
-        if (pts_start_from[pkt->stream_index] == 0)
+        else
         {
-            pts_start_from[pkt->stream_index] = pkt->pts;
-        }
-
-        pkt->pts = av_rescale_q_rnd(pkt->pts - pts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_PASS_MINMAX);
-        pkt->dts = av_rescale_q_rnd(pkt->dts - dts_start_from[pkt->stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_PASS_MINMAX);
-        if (pkt->pts < 0)
-        {
-            pkt->pts = 0;
-        }
-        if (pkt->dts < 0)
-        {
-            pkt->dts = 0;
-        }
-        pkt->duration = (int)av_rescale_q((int64_t)pkt->duration, in_stream->time_base, out_stream->time_base);
-        pkt->pos = -1;
-
-        ret = av_interleaved_write_frame(ofmt_ctx, pkt);
-        if (ret < 0)
-        {
-            std::cout << "Error muxing packet" << std::endl;
             break;
         }
-        av_packet_unref(pkt);
+        
     }
     delete[] dts_start_from;
     delete[] pts_start_from;
