@@ -31,8 +31,37 @@ bool SplitVideo(std::string in_filename, std::string out_filename, double from_s
     else
     {
         return false;
-    }  
-}
+    }
+};
+
+void log_watching(bool* control)
+{
+    while (control)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+    }
+};
+
+void live_mode_processing(configuration* conf)
+{
+    ffmpeg proc;
+    combat_log log;
+    file_handling files;
+    files.CheckForLogFiles(conf->log_directory);
+    files.CheckForVodFiles(conf->video_directory);
+
+    bool cont = true;
+    std::thread logRunner(log_watching, &cont);
+
+    
+
+    cont = false;
+    //checks if combat_log_vod_split directory exists and create it does not exist
+    std::string configDirectory = conf->log_directory + "\\combat_log_vod_split_processed_logs";
+    std::filesystem::path tmp = configDirectory;
+    CreateDirectory(tmp.c_str(), NULL);
+};
 
 //checks to see if vod is within the combat log windows
 bool CheckIfDatesAreValid(SYSTIME fight, SYSTIME vid)
@@ -58,29 +87,17 @@ bool CheckIfDatesAreValid(SYSTIME fight, SYSTIME vid)
 //returns the start or endpoints
 double GetStartOrEndPoints(SYSTIME fight, SYSTIME vid)
 {
-    double running = 0;
-    int extra;
-    int hours;
-    int minutes;
-    int seconds = fight.wSecond - vid.wSecond;
-    if (seconds < 0)
+    int extraHours = 0;
+    
+    if (fight.wHour < vid.wHour)
     {
-       minutes = (fight.wMinute + 1) - vid.wMinute;
+        extraHours = 24;
     }
-    else
-    {
-        minutes = fight.wMinute - vid.wMinute;
-    }
-    if (minutes < 0)
-    {
-        minutes = minutes * -1;
-        hours = (fight.wHour + 1) - vid.wHour;
-    }
-    else
-    {
-        hours = fight.wHour - vid.wHour;
-    }
-    return running;
+
+    int fightSeconds = ((fight.wHour + extraHours) * 3600) + (fight.wMinute * 60) + fight.wSecond;
+    int vidSeconds = (vid.wHour * 3600) + (vid.wMinute * 60) + vid.wSecond;
+    
+    return fightSeconds - vidSeconds;
 };
 
 //split mode post processing for running after vod has completed processing
@@ -94,7 +111,7 @@ bool split_mode_processing(configuration* conf)
 
     //gets log and vod files from directories
     files.CheckForLogFiles(conf->log_directory);
-    files.CheckForVodFiles(conf->log_directory);
+    files.CheckForVodFiles(conf->video_directory);
 
     //gets vod length
     for (auto& vod : files.vodFiles)
@@ -131,17 +148,35 @@ bool split_mode_processing(configuration* conf)
         {
             if (CheckIfDatesAreValid(fight.start, videos[0].startTime))
             {
-                fight.startSeconds = GetStartOrEndPoints(fight.end, videos[0].startTime);
-                fight.endSeconds = GetStartOrEndPoints(fight.start, videos[0].startTime);
-                fight.inFilename = videos[0].fileName;
-                fight.outFilename = conf->log_directory + fight.name + "_" + fight.difficulty + "_" + std::to_string(fight.fightNumber) + ".mkv";
+                //checks to see if the event is a key or a raid in retail or classic
+                if (fight.keyLevel <= 0)
+                {
+                    fight.startSeconds = GetStartOrEndPoints(fight.start, videos[0].startTime);
+                    fight.endSeconds = GetStartOrEndPoints(fight.end, videos[0].startTime);
+                    fight.inFilename = videos[0].fileName;
+                    fight.outFilename = conf->log_directory +
+                        std::to_string(fight.start.wYear) + "_" +
+                        std::to_string(fight.start.wMonth) + "-" +
+                        std::to_string(fight.start.wDay) + "-" +
+                        fight.name + "_" + fight.difficulty + "_" + std::to_string(fight.fightNumber) + ".mkv";
+                }
+                else
+                {
+                    fight.startSeconds = GetStartOrEndPoints(fight.start, videos[0].startTime);
+                    fight.endSeconds = GetStartOrEndPoints(fight.end, videos[0].startTime);
+                    fight.inFilename = videos[0].fileName;
+                    fight.outFilename = conf->log_directory +
+                        std::to_string(fight.start.wYear) + "_" +
+                        std::to_string(fight.start.wMonth) + "-" +
+                        std::to_string(fight.start.wDay) + "-" +
+                        fight.zone + "_" + std::to_string(fight.keyLevel) + "_" + std::to_string(fight.fightNumber) + ".mkv";
+                }
             }
         }
     }
     
 
-    //uses threads from config file to concurrently split files
-    //I will deal with multithreading this later because its 7am and I should have gone to bed like 9 hours ago
+    //processes video fights with available video files
     for (auto& fight : fights.orderedEncounters)
     {
         if (SplitVideo(fight.inFilename, fight.outFilename, fight.startSeconds - 15, fight.startSeconds + fight.duration + 15, &proc))
@@ -151,8 +186,7 @@ bool split_mode_processing(configuration* conf)
         else
         {
             fight.processed = false;
-        }
-        
+        }  
     }
 
     return true;
@@ -168,23 +202,15 @@ int main()
         return 1;
     }
 
+    //runs based on mode that is set up within config
     if (conf.mode == "split")
     {
         split_mode_processing(&conf);
     }
     else if (conf.mode == "live")
     {
-
+        live_mode_processing(&conf);
     }
 
-    
-    
-
-
-    
-    
-
     return 0;
-
-
 };

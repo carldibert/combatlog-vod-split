@@ -62,10 +62,6 @@ bool configuration::CheckForConfigFile()
                     {
                         this->mode = line.substr(found + 1, line.size() - 1);
                     }
-                    else if (setting == "threads")
-                    {
-                        this->threads = stoi(line.substr(found + 1, line.size() - 1));
-                    }
                 }
             }
             catch (const std::runtime_error& error)

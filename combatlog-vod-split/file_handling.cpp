@@ -91,6 +91,11 @@ DifficultyType convertToDifficultyTypeEnum (std::string& diff)
     }
 };
 
+combat_log::combat_log()
+{
+
+};
+
 combat_log_events::combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget)
 {
     this->date = initDate;
@@ -168,6 +173,15 @@ bool combat_log::ReadFile(std::string fileName)
     //gathers filename and creation date of text file
     this->fileName = fileName;
 
+    LPCSTR getString = fileName.c_str();
+    WIN32_FILE_ATTRIBUTE_DATA attrs;
+    GetFileAttributesExA(getString, GetFileExInfoStandard, &attrs);
+    SYSTEMTIME FileTime = { 0 };
+    SYSTEMTIME OutFileTimeLocal = { 0 };
+    FileTimeToSystemTime(&attrs.ftCreationTime, &FileTime);
+    SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &OutFileTimeLocal);
+    this->createDate = OutFileTimeLocal;
+
     int line = 1;
     std::string combatLogActiveLine;
     std::cout << "Beginning to Read File: " + fileName << std::endl;
@@ -176,6 +190,7 @@ bool combat_log::ReadFile(std::string fileName)
     {
         try
         {
+            //checks to see if the line starts with a number - indicates that there was a game crash
             if(CheckIfNumber(combatLogActiveLine))
             {
                 std::vector<std::string> actionEvent = SplitString(combatLogActiveLine, ' ');
@@ -193,6 +208,7 @@ bool combat_log::ReadFile(std::string fileName)
                     }
                 }
                 
+                //cleaning output with uneven output in combatlog file
                 std::vector<std::string> eventsClean;
                 if (targetEvent.find("\"") != std::string::npos)
                 {
@@ -234,6 +250,8 @@ bool combat_log::ReadFile(std::string fileName)
                     eventsClean = SplitString(targetEvent, ',');
                 }
                   
+
+                //builds log type with actions
                 LogEventType logType = convertToEnum(eventsClean[0]);
                 if (logType != OTHER)
                 {

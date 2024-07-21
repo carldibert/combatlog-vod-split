@@ -59,6 +59,7 @@ void PopulateEncounterList(std::vector<encounters>* encounterList, std::vector<c
             tmp.time = evnt.time;
             tmp.date = evnt.date;
             tmp.eventType = evnt.logAction;
+            tmp.year = var.createDate.wYear;
             encounterList->push_back(tmp);
         }
     }
@@ -116,7 +117,7 @@ std::vector<int> SplitString(std::string str, char splitter, char splitter2)
     return result;
 };
 
-void GenerateSysTime(Encounters_Ordered* temp)
+void GenerateSysTime(Encounters_Ordered* temp, int year)
 {
     std::vector<int> startTime = SplitString(temp->startTime, ':', '.');
     std::vector<int> endTime = SplitString(temp->endTime, ':', '.');
@@ -124,7 +125,7 @@ void GenerateSysTime(Encounters_Ordered* temp)
     
     SYSTIME start
     {
-        0,
+        year,
         dates[0],
         dates[1],
         startTime[0],
@@ -134,7 +135,7 @@ void GenerateSysTime(Encounters_Ordered* temp)
     };
     SYSTIME end
     {
-        0,
+        year,
         dates[0],
         dates[1],
         endTime[0],
@@ -166,6 +167,8 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
     std::string currentZone;
     for (auto& var : encounterList)
     {
+        //when instance type of 0 for retil or 2 for classic sets the start time and difficulty
+        //when instance type is a key it sets the key level
         if (var.instanceType == 0 || var.instanceType == 2)
         {
             if (var.eventType == 0)
@@ -223,8 +226,8 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
             }
 
             //generates time of encounters and does not add in fights shorter than 5 seconds for boss resets
-            GenerateSysTime(&tmp);
-            if (tmp.duration > 5)
+            GenerateSysTime(&tmp, var.year);
+            if (tmp.duration > 15)
             {
                 orderedEncounters->push_back(tmp);
             } 

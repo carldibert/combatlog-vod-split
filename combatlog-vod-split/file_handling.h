@@ -57,6 +57,7 @@ public:
     std::vector<std::string> SplitString(std::string str, char splitter);
     std::filesystem::path exePath;
     SYSTEMTIME createDate;
+    combat_log();
     combat_log(std::filesystem::path exePath);
     bool ReadFile(std::string fileName);
     bool CheckIfNumber(std::string str);

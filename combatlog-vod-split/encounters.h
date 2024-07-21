@@ -22,7 +22,8 @@ class encounters
         LogEventType eventType;
         std::string dungeonName;
         std::string difficulty;
-        int keyLevel;     
+        int keyLevel;
+        int year;
 };
 
 class Encounters_Ordered
