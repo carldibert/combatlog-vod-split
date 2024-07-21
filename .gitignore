@@ -60,3 +60,5 @@
 *.tlog
 *.txt
 /combatlog-vod-split/x64/Debug/combatlo.137f7b1b.tlog/link.read.1.tlog
+/combatlog-vod-split/x64/Debug/combatlog-vod-split.log
+/combatlog-vod-split/x64/Debug/combatlog-vod-split.Build.CppClean.log
