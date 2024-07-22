@@ -1,0 +1,184 @@
+﻿  combatlog-vod-split.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,27): error C3646: 'exePath': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,21): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,33): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,33): error C2061: syntax error: identifier 'path'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,5): error C2535: 'combat_log::combat_log(void)': member function already defined or declared
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,27): error C3646: 'exePath': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,27): error C3646: 'GetExeDirectory': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,42): error C2059: syntax error: '('
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,44): error C2238: unexpected token(s) preceding ';'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.h(17,14): error C1083: Cannot open include file: 'libavutil/timestamp.h': No such file or directory
+  configuration.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(27,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(27,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(27,22): error C2065: 'path': undeclared identifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(27,27): error C2146: syntax error: missing ';' before identifier 'tmp'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(27,27): error C2065: 'tmp': undeclared identifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(28,21): error C2065: 'tmp': undeclared identifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(31,15): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(31,27): error C2039: 'exists': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(31,27): error C3861: 'exists': identifier not found
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(49,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  encounters.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,27): error C3646: 'exePath': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,21): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,33): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,33): error C2061: syntax error: identifier 'path'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,5): error C2535: 'combat_log::combat_log(void)': member function already defined or declared
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,27): error C3646: 'exePath': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,27): error C3646: 'GetExeDirectory': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,42): error C2059: syntax error: '('
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,44): error C2238: unexpected token(s) preceding ';'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(128,9): warning C4838: conversion from 'int' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(129,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(129,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(129,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(129,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(129,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(130,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(130,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(130,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(130,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(130,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(131,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(131,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(131,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(131,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(131,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(132,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(132,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(132,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(132,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(132,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(133,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(133,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(133,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(133,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(133,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(134,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(134,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(134,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(134,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(134,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(138,9): warning C4838: conversion from 'int' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(139,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(139,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(139,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(139,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(139,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(140,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(140,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(140,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(140,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(140,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(141,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(141,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(141,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(141,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(141,18): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(142,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(142,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(142,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(142,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(142,18): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(143,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(143,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(143,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(143,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(143,18): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(144,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(144,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(144,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(144,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(144,18): warning C4838:         ]
+  ffmpeg.cpp
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.h(17,14): error C1083: Cannot open include file: 'libavutil/timestamp.h': No such file or directory
+  file_handling.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,27): error C3646: 'exePath': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(58,22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,21): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,33): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,33): error C2061: syntax error: identifier 'path'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(61,5): error C2535: 'combat_log::combat_log(void)': member function already defined or declared
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,27): error C3646: 'exePath': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(74,22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,22): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,27): error C3646: 'GetExeDirectory': unknown override specifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,42): error C2059: syntax error: '('
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.h(79,44): error C2238: unexpected token(s) preceding ';'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(17,11): error C2039: 'exePath': is not a member of 'file_handling'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(17,21): error C3861: 'GetExeDirectory': identifier not found
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,34): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,46): error C2039: 'directory_iterator': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,21): error C2530: 'entry': references must be initialized
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,21): error C3531: 'entry': a symbol whose type contains 'auto' must have an initializer
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,27): error C2143: syntax error: missing ';' before ':'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,65): error C2065: 'exePath': undeclared identifier
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,46): error C3861: 'directory_iterator': identifier not found
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(23,90): error C2143: syntax error: missing ';' before ')'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,35): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,47): error C2039: 'directory_iterator': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,22): error C2530: 'entry': references must be initialized
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,22): error C3531: 'entry': a symbol whose type contains 'auto' must have an initializer
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,28): error C2143: syntax error: missing ';' before ':'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,47): error C3861: 'directory_iterator': identifier not found
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,76): error C2143: syntax error: missing ';' before ')'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,35): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,47): error C2039: 'directory_iterator': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,22): error C2530: 'entry': references must be initialized
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,22): error C3531: 'entry': a symbol whose type contains 'auto' must have an initializer
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,28): error C2143: syntax error: missing ';' before ':'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,47): error C3861: 'directory_iterator': identifier not found
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,76): error C2143: syntax error: missing ';' before ')'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(63,6): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(63,18): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(63,38): error C2039: 'GetExeDirectory': is not a member of 'file_handling'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(63,18): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(63,38): error C2146: syntax error: missing ';' before identifier 'GetExeDirectory'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(64,1): error C2143: syntax error: missing ';' before '{'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(64,1): error C2447: '{': missing function header (old-style formal list?)
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(107,29): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(107,41): error C2039: 'path': is not a member of 'std'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(107,13): error C7550: 'combat_log::{ctor}': the qualified name in this context names a constructor, not a type
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(107,46): error C2146: syntax error: missing ')' before identifier 'exePath'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(108,1): error C2143: syntax error: missing ';' before '{'
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(108,1): error C2447: '{': missing function header (old-style formal list?)
+  video_file.cpp
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(45,45): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(47,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(48,40): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(50,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(51,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(53,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(54,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(56,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(75,39): warning C4804: '%': unsafe use of type 'bool' in operation
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(91,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(93,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(95,9): warning C4804: '%': unsafe use of type 'bool' in operation
