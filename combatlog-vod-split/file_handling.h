@@ -71,10 +71,12 @@ public:
     bool CheckForLogFiles();
     bool CheckForLogFiles(std::string directory);
     bool CheckForVodFiles(std::string directory);
+    void GetMostRecentFile();
     std::filesystem::path exePath;
     std::vector<std::string> logFiles;
     std::vector<std::string> vodFiles;
     std::vector<combat_log> contents;
+    std::string currentLog;
 private:
     std::filesystem::path GetExeDirectory();
 };

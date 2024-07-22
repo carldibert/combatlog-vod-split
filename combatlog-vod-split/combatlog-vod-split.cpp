@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <algorithm>
 #include <TlHelp32.h>
+#include <conio.h>
 
 #include "file_handling.h"
 #include "encounters.h"
@@ -35,144 +36,32 @@ bool SplitVideo(std::string in_filename, std::string out_filename, double from_s
     }
 };
 
-void log_watching(bool* control)
-{
-    while (control)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        break;
-    }
-};
-
-SYSTEMTIME GetFileAttr(std::string file)
-{
-    LPCSTR getString = file.c_str();
-    WIN32_FILE_ATTRIBUTE_DATA attrs;
-    GetFileAttributesExA(getString, GetFileExInfoStandard, &attrs);
-    SYSTEMTIME FileTime = { 0 };
-    SYSTEMTIME FileTimeLocal = { 0 };
-    FileTimeToSystemTime(&attrs.ftCreationTime, &FileTime);
-    SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &FileTimeLocal);
-
-    return FileTimeLocal;
-};
-
-bool GetNewerFile(std::string oldFile, std::string newFiles)
-{
-    SYSTEMTIME oldTime = GetFileAttr(oldFile);
-    SYSTEMTIME newTime = GetFileAttr(newFiles);
-
-    if (!newTime.wYear > oldTime.wYear)
-    {
-        return false;
-    }
-    if (!newTime.wMonth > oldTime.wMonth)
-    {
-        return false;
-    }
-    if (!newTime.wDay > oldTime.wDay)
-    {
-        return false;
-    }
-    if (!newTime.wMinute > oldTime.wMinute)
-    {
-        return false;
-    }
-    if (!newTime.wSecond > oldTime.wSecond)
-    {
-        return false;
-    }
-
-    return true;
-};
-
-std::string GetMostRecentFile(std::vector<std::string> files)
-{
-    if (files.size() <= 1)
-    {
-        return files[0];
-    }
-
-    std::string newestFile = files[0];
-
-    for (auto& file : files)
-    {
-        if (GetNewerFile(newestFile, file))
-        {
-            newestFile = file;
-        }
-    }
-
-    return newestFile;
-};
-
-DWORD FindProcessId(const std::wstring& processName)
-{
-    PROCESSENTRY32 processInfo;
-    processInfo.dwSize = sizeof(processInfo);
-
-    HANDLE processesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-    if (processesSnapshot == INVALID_HANDLE_VALUE) {
-        return 0;
-    }
-
-    Process32First(processesSnapshot, &processInfo);
-    if (!processName.compare(processInfo.szExeFile))
-    {
-        CloseHandle(processesSnapshot);
-        return processInfo.th32ProcessID;
-    }
-
-    while (Process32Next(processesSnapshot, &processInfo))
-    {
-        if (!processName.compare(processInfo.szExeFile))
-        {
-            CloseHandle(processesSnapshot);
-            return processInfo.th32ProcessID;
-        }
-    }
-
-    CloseHandle(processesSnapshot);
-    return 0;
-}
-
-void updateLogFileOnCrash(DWORD* processId, std::string* activeLog)
-{
-    while (processId == 0)
-    {
-        auto tmp = FindProcessId(L"Wow.exe");
-        processId = &tmp;
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-}
-
 void live_mode_processing(configuration* conf)
 {
     ffmpeg proc;
     combat_log log;
     file_handling files;
-    bool cont = true;
+    int cont = 1;
     files.CheckForLogFiles(conf->log_directory);
     files.CheckForVodFiles(conf->video_directory);
-
-    //gets the most recent video and text files
-    std::string activeLog = GetMostRecentFile(files.logFiles);
-    std::string activeVod = GetMostRecentFile(files.vodFiles);
-
-    auto processId = FindProcessId(L"Wow.exe");
-
-    //threading nightmare im going to eat the sleepytime chicken
-    std::thread updateOnCrash(updateLogFileOnCrash, &processId, &activeLog);
-    //std::thread logRunner(log_watching, &cont);
-    
-    //logRunner.join();
-    //updateOnCrash.join();
-    cont = false;
 
     //checks if combat_log_vod_split directory exists and create it does not exist
     std::string configDirectory = conf->log_directory + "\\combat_log_vod_split_processed_logs";
     std::filesystem::path tmp = configDirectory;
     CreateDirectory(tmp.c_str(), NULL);
+
+    bool temp = true;
+    std::string st;
+    while (temp)
+    {
+        std::cin >> st;
+        if (st == "s")
+        {
+            break;
+        }
+    }
+
+
 };
 
 //checks to see if vod is within the combat log windows

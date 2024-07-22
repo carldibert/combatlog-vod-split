@@ -12,6 +12,68 @@
 #include <stdlib.h>
 #include "file_handling.h"
 
+SYSTEMTIME GetFileAttr(std::string file)
+{
+    LPCSTR getString = file.c_str();
+    WIN32_FILE_ATTRIBUTE_DATA attrs;
+    GetFileAttributesExA(getString, GetFileExInfoStandard, &attrs);
+    SYSTEMTIME FileTime = { 0 };
+    SYSTEMTIME FileTimeLocal = { 0 };
+    FileTimeToSystemTime(&attrs.ftCreationTime, &FileTime);
+    SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &FileTimeLocal);
+
+    return FileTimeLocal;
+};
+
+bool GetNewerFile(std::string oldFile, std::string newFiles)
+{
+    SYSTEMTIME oldTime = GetFileAttr(oldFile);
+    SYSTEMTIME newTime = GetFileAttr(newFiles);
+
+    if (!newTime.wYear > oldTime.wYear)
+    {
+        return false;
+    }
+    if (!newTime.wMonth > oldTime.wMonth)
+    {
+        return false;
+    }
+    if (!newTime.wDay > oldTime.wDay)
+    {
+        return false;
+    }
+    if (!newTime.wMinute > oldTime.wMinute)
+    {
+        return false;
+    }
+    if (!newTime.wSecond > oldTime.wSecond)
+    {
+        return false;
+    }
+
+    return true;
+};
+
+void file_handling::GetMostRecentFile()
+{
+    if (logFiles.size() <= 1)
+    {
+        currentLog = logFiles[0];
+    }
+
+    std::string newestFile = logFiles[0];
+
+    for (auto& file : logFiles)
+    {
+        if (GetNewerFile(newestFile, file))
+        {
+            newestFile = file;
+        }
+    }
+
+    currentLog = newestFile;
+};
+
 file_handling::file_handling()
 {
     this->exePath = GetExeDirectory();
@@ -44,6 +106,8 @@ bool file_handling::CheckForLogFiles(std::string directory)
             }
         }
     }
+
+    GetMostRecentFile();
     return true;
 };
 
