@@ -25,6 +25,9 @@ static void log_packet(const AVFormatContext* fmt_ctx, const AVPacket* pkt, cons
     AVRational* time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
 }
 
+//processes file and outputs transmuxed video from start to end times
+//copies from the first bframe after start time and continues processing until final b frame
+//OBS uses a bframe timing of around 5-7 seconds
 bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, double from_seconds, double end_seconds)
 {
     const AVOutputFormat* ofmt = NULL;
@@ -59,6 +62,7 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
         return false;
     }
 
+    //dumps files format of input file to show on frontend
     av_dump_format(ifmt_ctx, 0, in_filename, 0);
 
     //created output context
@@ -77,6 +81,7 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
         return false;
     }
 
+    //sets the output format for adjustments during transmux
     ofmt = ofmt_ctx->oformat;
 
     //gathers infomation about streams
@@ -143,9 +148,9 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
         return false;
     }
 
+    //transmuxing of video
     while (1)
     {
-        
         AVStream* in_stream, * out_stream;
 
         //reads frame and if unable to be read exits
@@ -162,6 +167,7 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
         //if the time is less than the end time copies frames and moves into the output file if not ends transmission
         if ((av_q2d(in_stream->time_base) * pkt->pts) < end_seconds)
         {
+            //setting the stream idexes to be identical and copies existing frames without reencoding and muxes into container
             pkt->stream_index = stream_mapping[pkt->stream_index];
             out_stream = ofmt_ctx->streams[pkt->stream_index];
             av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
@@ -186,12 +192,14 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
     av_packet_free(&pkt);
     avformat_close_input(&ifmt_ctx);
 
+    //if a nofile flag is present will free memory from existing pointers as well as the context
     if (ofmt_ctx && !(ofmt->flags & AVFMT_NOFILE))
     {
         avio_closep(&ofmt_ctx->pb);
     }
     avformat_free_context(ofmt_ctx);
 
+    //succesful video processing
     return true;
 };
 
