@@ -23,6 +23,12 @@ void ProcessLogs(file_handling* files, std::string logFile)
     files->contents.push_back(log);
 };
 
+void ProcessLogLive(combat_log* log, std::string file)
+{
+    log->running = true;
+    log->ReadFileLive(file);
+};
+
 //for threading the processing of available files
 bool SplitVideo(std::string in_filename, std::string out_filename, double from_seconds, double end_seconds, ffmpeg* proc)
 {
@@ -36,6 +42,7 @@ bool SplitVideo(std::string in_filename, std::string out_filename, double from_s
     }
 };
 
+//processing for a live vod
 void live_mode_processing(configuration* conf)
 {
     ffmpeg proc;
@@ -45,23 +52,18 @@ void live_mode_processing(configuration* conf)
     files.CheckForLogFiles(conf->log_directory);
     files.CheckForVodFiles(conf->video_directory);
 
-    //checks if combat_log_vod_split directory exists and create it does not exist
-    std::string configDirectory = conf->log_directory + "\\combat_log_vod_split_processed_logs";
-    std::filesystem::path tmp = configDirectory;
-    CreateDirectory(tmp.c_str(), NULL);
+    std::cout << "Currently selected log file: " + files.currentLog << std::endl;
 
-    bool temp = true;
-    std::string st;
-    while (temp)
-    {
-        std::cin >> st;
-        if (st == "s")
-        {
-            break;
-        }
-    }
+    bool activeRunning = true;
+
+    std::thread logReviewer(ProcessLogLive, &log, files.currentLog);
+
+    Sleep(3000);
+    log.running = false;
+    logReviewer.join();
 
 
+    int i = 0;
 };
 
 //checks to see if vod is within the combat log windows
@@ -188,6 +190,15 @@ bool split_mode_processing(configuration* conf)
         {
             fight.processed = false;
         }  
+    }
+
+    //listed fights that had errors splitting
+    for (auto& var : fights.orderedEncounters)
+    {
+        if (!var.processed)
+        {
+            std::cout << "Unable to split encounter: " + var.name + "-" + std::to_string(var.fightNumber) << std::endl;
+        }
     }
 
     return true;
