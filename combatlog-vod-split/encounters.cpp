@@ -1,12 +1,38 @@
 #include "encounters.h"
 #include "file_handling.h"
+#include "ffmpeg.h"
 #include <vector>
 #include <string>
 
 Encounters_Ordered::Encounters_Ordered()
 {
     processed = false;
+    failed = false;
 };
+
+bool Encounters_Total::processEncounters()
+{
+    ffmpeg proc;
+
+    for (int i = 0; i < orderedEncounters.size(); i++)
+    {
+        if (!orderedEncounters[i].processed || !orderedEncounters[i].failed)
+        {
+            if (proc.ProcessFile(orderedEncounters[i].inFilename.c_str(), 
+                orderedEncounters[i].outFilename.c_str(),
+                orderedEncounters[i].startSeconds - 15,
+                orderedEncounters[i].duration + 15))
+            {
+                orderedEncounters[i].processed = true;
+            }
+            else
+            {
+                orderedEncounters[i].failed = true;
+            }
+        }
+    }
+    return true;
+}
 
 //get difficulty name
 std::string GetDifficultyName(DifficultyType diff)
@@ -62,6 +88,40 @@ void PopulateEncounterList(std::vector<encounters>* encounterList, std::vector<c
             tmp.year = var.createDate.wYear;
             encounterList->push_back(tmp);
         }
+    }
+};
+
+//gathers info from list and sanitizes the data
+void PopulateEncounterList(std::vector<encounters>* encounterList, combat_log contents)
+{
+    for (auto& evnt : contents.combatLogEvents)
+    {
+        encounters tmp;
+        tmp.zone = evnt.target;
+        if (evnt.difficulty == 100 && evnt.keyLevel < 0)
+        {
+            tmp.instanceType = OpenWorld;
+        }
+        else if (evnt.logAction == 3)
+        {
+            tmp.instanceType = Dungeon;
+            tmp.dungeonName = evnt.dungeonName;
+            tmp.keyLevel = evnt.keyLevel;
+        }
+        else if (evnt.logAction == 4)
+        {
+            tmp.instanceType = Dungeon;
+        }
+        else if (evnt.difficulty == 14 || evnt.difficulty == 15 || evnt.difficulty == 16 || evnt.difficulty == 17)
+        {
+            tmp.instanceType = Raid;
+            tmp.difficulty = GetDifficultyName(evnt.difficulty);
+        }
+        tmp.time = evnt.time;
+        tmp.date = evnt.date;
+        tmp.eventType = evnt.logAction;
+        tmp.year = contents.createDate.wYear;
+        encounterList->push_back(tmp);
     }
 };
 
@@ -236,8 +296,25 @@ void OrderEncounters(std::vector<Encounters_Ordered>* orderedEncounters, std::ve
     }
 };
 
+Encounters_Total::Encounters_Total()
+{
+
+};
+
 Encounters_Total::Encounters_Total(std::vector<combat_log> contents)
 {
     PopulateEncounterList(&encounterList, contents);
     OrderEncounters(&orderedEncounters, encounterList);
-}
+};
+
+void Encounters_Total::PopulateEncounters(std::vector<combat_log> contents)
+{
+    PopulateEncounterList(&encounterList, contents);
+    OrderEncounters(&orderedEncounters, encounterList);
+};
+
+void Encounters_Total::PopulateEncounters(combat_log contents)
+{
+    PopulateEncounterList(&encounterList, contents);
+    OrderEncounters(&orderedEncounters, encounterList);
+};

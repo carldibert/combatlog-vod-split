@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "file_handling.h"
+
 enum LogEventType
 {
     ENCOUNTER_START = 0,
@@ -80,6 +82,8 @@ public:
     std::vector<std::string> vodFiles;
     std::vector<combat_log> contents;
     std::string currentLog;
+    combat_log log;
+    bool running;
 private:
     std::filesystem::path GetExeDirectory();
 };

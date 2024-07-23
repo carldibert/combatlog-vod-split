@@ -45,6 +45,7 @@ class Encounters_Ordered
         int fightNumber;
         int keyLevel;
         bool processed;
+        bool failed;
         Encounters_Ordered();
 };
 
@@ -52,7 +53,11 @@ class Encounters_Total
 {
     public:
         std::vector<Encounters_Ordered> orderedEncounters;
+        Encounters_Total();
         Encounters_Total(std::vector<combat_log> contents);
+        bool processEncounters();
+        void PopulateEncounters(std::vector<combat_log> contents);
+        void PopulateEncounters(combat_log contents);
     private:
         std::vector<encounters> encounterList;      
 };

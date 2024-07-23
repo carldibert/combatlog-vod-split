@@ -77,6 +77,7 @@ void file_handling::GetMostRecentFile()
 file_handling::file_handling()
 {
     this->exePath = GetExeDirectory();
+    running = false;
 };
 
 //old and unused for testing
@@ -392,14 +393,13 @@ bool combat_log::ReadFileLive(std::string fileName)
         this->createDate = OutFileTimeLocal;
     }
 
-    
-
+    //begins searching based off of the last read line in combatlog
     int line = 0;
     std::string combatLogActiveLine;
-    std::cout << "Beginning to Read File: " + fileName << std::endl;
     std::ifstream file(fileName);
     while (std::getline(file, combatLogActiveLine))
     {
+        //if line is newer than previously read line to avoid searching the full file
         if (line >= currentLine)
         {
             try
@@ -483,6 +483,7 @@ bool combat_log::ReadFileLive(std::string fileName)
                             break;
                         case ENCOUNTER_END:
                             combatLogEvents.push_back(activeLine);
+                            std::cout << "Encounter detected" << std::endl;
                             break;
                         case ZONE_CHANGE:
                             activeLine.difficulty = convertToDifficultyTypeEnum(eventsClean[3]);
@@ -498,6 +499,7 @@ bool combat_log::ReadFileLive(std::string fileName)
                             activeLine.keyChested = std::stoi(eventsClean[2]);
                             activeLine.isOpenWorld = false;
                             combatLogEvents.push_back(activeLine);
+                            std::cout << "Keystone detected" << std::endl;
                             break;
                         }
                     }

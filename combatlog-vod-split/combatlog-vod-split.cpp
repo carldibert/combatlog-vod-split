@@ -8,12 +8,31 @@
 #include <algorithm>
 #include <TlHelp32.h>
 #include <conio.h>
+#include <future>
 
 #include "file_handling.h"
 #include "encounters.h"
 #include "ffmpeg.h"
 #include "configuration.h"
 #include "video_file.h"
+
+std::mutex videoRender;
+
+//returns the start or endpoints
+double GetStartOrEndPoints(SYSTIME fight, SYSTIME vid)
+{
+    int extraHours = 0;
+
+    if (fight.wHour < vid.wHour)
+    {
+        extraHours = 24;
+    }
+
+    int fightSeconds = ((fight.wHour + extraHours) * 3600) + (fight.wMinute * 60) + fight.wSecond;
+    int vidSeconds = (vid.wHour * 3600) + (vid.wMinute * 60) + vid.wSecond;
+
+    return fightSeconds - vidSeconds;
+};
 
 //for threading processing of logs 
 void ProcessLogs(file_handling* files, std::string logFile)
@@ -23,10 +42,59 @@ void ProcessLogs(file_handling* files, std::string logFile)
     files->contents.push_back(log);
 };
 
-void ProcessLogLive(combat_log* log, std::string file)
+
+bool processVid(Encounters_Total* fights)
 {
-    log->running = true;
-    log->ReadFileLive(file);
+    auto fight = fights;
+    fight->processEncounters();
+    return true;
+};
+
+//processes encounters to see which fights still need to get encoded
+void ProcessEncountersLive(Encounters_Total* fights, file_handling* files, std::string logDirectory, SYSTIME startTime, std::string fileName)
+{
+    while (files->running)
+    {
+        ffmpeg proc;
+        files->log.ReadFileLive(files->currentLog);
+        fights->PopulateEncounters(files->log);
+
+        for (int i = 0; i < fights->orderedEncounters.size(); i++)
+        {
+            if (fights->orderedEncounters[i].processed == true)
+            {
+                break;
+            }
+
+            //checks to see if the event is a key or a raid in retail or classic
+            if (fights->orderedEncounters[i].keyLevel <= 0)
+            {
+                fights->orderedEncounters[i].startSeconds = GetStartOrEndPoints(fights->orderedEncounters[i].start, startTime);
+                fights->orderedEncounters[i].endSeconds = GetStartOrEndPoints(fights->orderedEncounters[i].end, startTime);
+                fights->orderedEncounters[i].inFilename = fileName;
+                fights->orderedEncounters[i].outFilename = logDirectory +
+                    std::to_string(fights->orderedEncounters[i].start.wYear) + "_" +
+                    std::to_string(fights->orderedEncounters[i].start.wMonth) + "-" +
+                    std::to_string(fights->orderedEncounters[i].start.wDay) + "-" +
+                    fights->orderedEncounters[i].name + "_" + fights->orderedEncounters[i].difficulty + "_" + std::to_string(fights->orderedEncounters[i].fightNumber) + ".mkv";
+            }
+            else
+            {
+                fights->orderedEncounters[i].startSeconds = GetStartOrEndPoints(fights->orderedEncounters[i].start, startTime);
+                fights->orderedEncounters[i].endSeconds = GetStartOrEndPoints(fights->orderedEncounters[i].end, startTime);
+                fights->orderedEncounters[i].inFilename = fileName;
+                fights->orderedEncounters[i].outFilename = logDirectory +
+                    std::to_string(fights->orderedEncounters[i].start.wYear) + "_" +
+                    std::to_string(fights->orderedEncounters[i].start.wMonth) + "-" +
+                    std::to_string(fights->orderedEncounters[i].start.wDay) + "-" +
+                    fights->orderedEncounters[i].zone + "_" + std::to_string(fights->orderedEncounters[i].keyLevel) + "_" + std::to_string(fights->orderedEncounters[i].fightNumber) + ".mkv";
+            }
+        }
+
+        bool opt = false;
+        while (processVid(fights));
+        int i = 0;
+    }
 };
 
 //for threading the processing of available files
@@ -42,25 +110,41 @@ bool SplitVideo(std::string in_filename, std::string out_filename, double from_s
     }
 };
 
+void splitVodLive(Encounters_Total* fights, file_handling* files)
+{
+    while (files->running)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(30));
+        
+    }
+};
+
 //processing for a live vod
 void live_mode_processing(configuration* conf)
 {
-    ffmpeg proc;
     combat_log log;
     file_handling files;
+    Encounters_Total fights;
     int cont = 1;
     files.CheckForLogFiles(conf->log_directory);
     files.CheckForVodFiles(conf->video_directory);
+    video_file vid(files.vodFiles[0]);
+    files.log = log;
+    files.log.running = true;
+    
 
+    //lists out the currently selected log file based on the most recent log file
     std::cout << "Currently selected log file: " + files.currentLog << std::endl;
 
-    bool activeRunning = true;
-
-    std::thread logReviewer(ProcessLogLive, &log, files.currentLog);
+    files.running = true;
+    std::thread logProcessor(ProcessEncountersLive, &fights, &files, conf->log_directory, vid.startTime, vid.fileName);
 
     Sleep(3000);
-    log.running = false;
-    logReviewer.join();
+
+    while (files.running)
+    {
+        int f = 0;
+    }
 
 
     int i = 0;
@@ -85,22 +169,6 @@ bool CheckIfDatesAreValid(SYSTIME fight, SYSTIME vid)
         return false;
     }
     return true;
-};
-
-//returns the start or endpoints
-double GetStartOrEndPoints(SYSTIME fight, SYSTIME vid)
-{
-    int extraHours = 0;
-    
-    if (fight.wHour < vid.wHour)
-    {
-        extraHours = 24;
-    }
-
-    int fightSeconds = ((fight.wHour + extraHours) * 3600) + (fight.wMinute * 60) + fight.wSecond;
-    int vidSeconds = (vid.wHour * 3600) + (vid.wMinute * 60) + vid.wSecond;
-    
-    return fightSeconds - vidSeconds;
 };
 
 //split mode post processing for running after vod has completed processing
