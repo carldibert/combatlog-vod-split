@@ -1,99 +1,98 @@
 ﻿  combatlog-vod-split.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(58,16): warning C4101: 'proc': unreferenced local variable
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(194,23): warning C4244: 'initializing': conversion from 'int64_t' to 'float', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(195,46): warning C4244: '=': conversion from 'int64_t' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(128,23): warning C4244: 'initializing': conversion from 'int64_t' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\combatlog-vod-split.cpp(129,46): warning C4244: '=': conversion from 'int64_t' to 'int', possible loss of data
   configuration.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(49,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\configuration.cpp(58,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\xutility(4672,18): warning C4244: '=': conversion from 'wchar_t' to 'char', possible loss of data
   encounters.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(268,9): warning C4838: conversion from 'int' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(269,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(269,16): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(269,16): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(269,16): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(269,16): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(270,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(270,16): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(270,16): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(270,16): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(270,16): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(271,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(271,20): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(271,20): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(271,20): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(271,20): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(272,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(272,20): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(272,20): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(272,20): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(272,20): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(273,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(273,20): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(273,20): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(273,20): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(273,20): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(274,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(274,20): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(274,20): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(274,20): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(274,20): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(278,9): warning C4838: conversion from 'int' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(279,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(279,16): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(279,16): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(279,16): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(279,16): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(280,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(280,16): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(280,16): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(280,16): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(280,16): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(281,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(281,18): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(281,18): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(281,18): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(281,18): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(282,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(282,18): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(282,18): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(282,18): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(282,18): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(283,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(283,18): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(283,18): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(283,18): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(283,18): warning C4838:         ]
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(284,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(284,18): warning C4838:         with
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(284,18): warning C4838:         [
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(284,18): warning C4838:             _Ty=int
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(284,18): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(297,9): warning C4838: conversion from 'int' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(298,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(298,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(298,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(298,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(298,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(299,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(299,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(299,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(299,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(299,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(300,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(300,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(300,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(300,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(300,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(301,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(301,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(301,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(301,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(301,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(302,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(302,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(302,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(302,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(302,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(303,20): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(303,20): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(303,20): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(303,20): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(303,20): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(307,9): warning C4838: conversion from 'int' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(308,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(308,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(308,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(308,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(308,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(309,16): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(309,16): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(309,16): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(309,16): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(309,16): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(310,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(310,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(310,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(310,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(310,18): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(311,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(311,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(311,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(311,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(311,18): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(312,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(312,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(312,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(312,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(312,18): warning C4838:         ]
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(313,18): warning C4838: conversion from '_Ty' to 'WORD' requires a narrowing conversion
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(313,18): warning C4838:         with
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(313,18): warning C4838:         [
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(313,18): warning C4838:             _Ty=int
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(313,18): warning C4838:         ]
   ffmpeg.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.cpp(88,19): warning C4018: '<': signed/unsigned mismatch
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.cpp(145,52): warning C4244: 'argument': conversion from 'double' to 'int64_t', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.cpp(85,19): warning C4018: '<': signed/unsigned mismatch
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\ffmpeg.cpp(142,52): warning C4244: 'argument': conversion from 'double' to 'int64_t', possible loss of data
   file_handling.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(33,9): warning C4804: '>': unsafe use of type 'bool' in operation
 D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(37,9): warning C4804: '>': unsafe use of type 'bool' in operation
 D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(41,9): warning C4804: '>': unsafe use of type 'bool' in operation
 D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(45,9): warning C4804: '>': unsafe use of type 'bool' in operation
 D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(49,9): warning C4804: '>': unsafe use of type 'bool' in operation
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\file_handling.cpp(53,9): warning C4804: '>': unsafe use of type 'bool' in operation
   video_file.cpp
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(75,45): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(77,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(78,40): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(80,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(81,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(83,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(84,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(86,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(105,39): warning C4804: '%': unsafe use of type 'bool' in operation
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(121,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(123,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(125,9): warning C4804: '%': unsafe use of type 'bool' in operation
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(82,45): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(84,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(85,40): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(87,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(88,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(90,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(91,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(93,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(112,39): warning C4804: '%': unsafe use of type 'bool' in operation
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(128,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(130,22): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\video_file.cpp(132,9): warning C4804: '%': unsafe use of type 'bool' in operation
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
   Generating code
   Previous IPDB not found, fall back to full compilation.
-D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(135): warning C4715: 'GetDifficultyName': not all control paths return a value
-  All 1945 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+D:\Documents\Workspace\combatlog-vod-split\combatlog-vod-split\encounters.cpp(161): warning C4715: 'GetDifficultyName': not all control paths return a value
+  All 1978 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   combatlog-vod-split.vcxproj -> D:\Documents\Workspace\combatlog-vod-split\bin\x64\Release\combatlog-vod-split.exe
