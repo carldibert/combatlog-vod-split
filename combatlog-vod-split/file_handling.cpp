@@ -373,11 +373,6 @@ bool combat_log::ReadFile(std::string fileName)
 
 bool combat_log::ReadFileLive(std::string fileName)
 {
-    if (!running)
-    {
-        return false;;
-    }
-
     //gathers filename and creation date of text file
     this->fileName = fileName;
 
@@ -394,7 +389,7 @@ bool combat_log::ReadFileLive(std::string fileName)
     }
 
     //begins searching based off of the last read line in combatlog
-    int line = 0;
+    int line = 1;
     std::string combatLogActiveLine;
     std::ifstream file(fileName);
     while (std::getline(file, combatLogActiveLine))

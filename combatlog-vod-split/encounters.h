@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "video_file.h"
 
 #include "file_handling.h"
 #include "video_file.h"
@@ -47,17 +48,26 @@ class Encounters_Ordered
         bool processed;
         bool failed;
         Encounters_Ordered();
+        void GetStartTime(SYSTIME vid);
 };
 
 class Encounters_Total
 {
     public:
+        std::string logDirectory;
+        std::string vodDirectory;
         std::vector<Encounters_Ordered> orderedEncounters;
+        bool running;
+        file_handling files;
+        video_file vid;
+        SYSTIME vodStartTime;
         Encounters_Total();
         Encounters_Total(std::vector<combat_log> contents);
         bool processEncounters();
         void PopulateEncounters(std::vector<combat_log> contents);
         void PopulateEncounters(combat_log contents);
+        void RunThroughLog();
+        void OrderEncounters();
     private:
         std::vector<encounters> encounterList;      
 };

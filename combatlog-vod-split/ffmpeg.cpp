@@ -164,6 +164,9 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
         in_stream = ifmt_ctx->streams[pkt->stream_index];
         out_stream = ofmt_ctx->streams[pkt->stream_index];
 
+        //441
+        double tmp = av_q2d(in_stream->time_base) * pkt->pts;
+
         //if the time is less than the end time copies frames and moves into the output file if not ends transmission
         if ((av_q2d(in_stream->time_base) * pkt->pts) < end_seconds)
         {

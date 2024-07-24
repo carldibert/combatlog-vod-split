@@ -23,7 +23,8 @@ class video_file
         std::string date;
         int64_t duration;
         int durationInSeconds;
-        video_file(std::string file);
+        void InitFile(std::string file);
+        video_file();
         video_file(std::string file, int64_t dur);
         SYSTIME GetEndTime(float seconds);
 };
