@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <cstdlib>
 
+//initializes file for when the constructor is not explicitly called with a file
+//should combine this with the other constructor for when I refactor
 void video_file::InitFile(std::string file)
 {
     this->fileName = file;
@@ -28,11 +30,15 @@ void video_file::InitFile(std::string file)
     this->startTime = startTime;
 }
 
+//default constructor should do something about this and initialize everything
+//but I should also refactor so is this really what im thinking of doing
+//prolly not safe but whatever
 video_file::video_file()
 {
     
 };
 
+//constructor with built in time for post stream splitting
 video_file::video_file(std::string file, int64_t dur)
 {
     this->fileName = file;
@@ -59,6 +65,7 @@ video_file::video_file(std::string file, int64_t dur)
     this->duration = dur;
 };
 
+//gathers end time of video which is useful for splitting afterwards but kinda pointless for live splitting
 SYSTIME video_file::GetEndTime(float seconds)
 {
     SYSTIME returnTime

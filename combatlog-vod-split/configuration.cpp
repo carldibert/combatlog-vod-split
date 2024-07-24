@@ -10,6 +10,11 @@
 
 #include "configuration.h"
 
+//for once something that actually was thought out
+//initalizes the configuration to the user's documents directory
+//this is where the DLLs and executable should be stored
+//but they can put it wherever but the config needs to be there to read from unless I let it store in the .exe
+//ill need to ask people what they think idk im not their real dad
 void configuration::SetConfiguration()
 {
     //gathers document folder location
@@ -20,14 +25,18 @@ void configuration::SetConfiguration()
     this->my_documents = tmp;
 };
 
+//checks for a configuration file
 bool configuration::CheckForConfigFile()
 {
+    //prolly shouldnt have this since I am going to be packaging this in one directory
     //checks if combat_log_vod_split directory exists and create it does not exist
     std::string configDirectory = my_documents + "\\combat_log_vod_split";
     std::filesystem::path tmp = configDirectory;
     CreateDirectory(tmp.c_str(), NULL);
 
-    //checks to see if configuration file exists and if it does not creates a config file
+    //checks to see if configuration file is missing
+    //if missing it creates a blank config file and should prolly include one with some defaults either in the readme or by default
+    //I should also really look at where the default log location is
     if (!std::filesystem::exists(configDirectory + "\\config.conf"))
     {
         std::ofstream outfile(configDirectory + "\\config.conf");
@@ -49,6 +58,10 @@ bool configuration::CheckForConfigFile()
                 int found = line.find("=");
                 if (found > 1 && found != line.size())
                 {
+                    //if I wanted to add more settings it should be in here but idk what else
+                    //people would want to have as a setting
+                    //maybe something for different games if I find ways to parse other games logs
+                    //or maybe speed runner stuff?
                     std::string setting = line.substr(0, found);
                     if (setting == "video_directory")
                     {
@@ -88,5 +101,6 @@ bool configuration::CheckForConfigFile()
         }
     }
 
+    //config file has loaded everything properly
     return true;
 };

@@ -20,16 +20,13 @@ extern "C"
     #include <libavcodec/avcodec.h>
 }
 
-static void log_packet(const AVFormatContext* fmt_ctx, const AVPacket* pkt, const char* tag)
-{
-    AVRational* time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
-}
-
 //processes file and outputs transmuxed video from start to end times
 //copies from the first bframe after start time and continues processing until final b frame
 //OBS uses a bframe timing of around 5-7 seconds
+//should have the lead time be around 20 seconds before the pull and 20 seconds after to account for OBS's B frame encoding
 bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, double from_seconds, double end_seconds)
 {
+    //init
     const AVOutputFormat* ofmt = NULL;
     AVFormatContext* ifmt_ctx = NULL, * ofmt_ctx = NULL;
     AVPacket* pkt = NULL;
@@ -164,9 +161,6 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
         in_stream = ifmt_ctx->streams[pkt->stream_index];
         out_stream = ofmt_ctx->streams[pkt->stream_index];
 
-        //441
-        double tmp = av_q2d(in_stream->time_base) * pkt->pts;
-
         //if the time is less than the end time copies frames and moves into the output file if not ends transmission
         if ((av_q2d(in_stream->time_base) * pkt->pts) < end_seconds)
         {
@@ -207,6 +201,8 @@ bool ffmpeg::ProcessFile(const char* in_filename, const char* out_filename, doub
 };
 
 //gets duration of video for file sorting purposes
+//I should really just use this cause it will throw me an issue or maybe I keep it for the splitting mode
+//I dont know what im going to do but throwing out ideas to look back on later
 int64_t ffmpeg::GetDuration(const char* filename)
 {
     AVFormatContext* pFormatCtx = avformat_alloc_context();

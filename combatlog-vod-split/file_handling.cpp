@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "file_handling.h"
 
+//gathers attributes for when file was created for the most recent files
 SYSTEMTIME GetFileAttr(std::string file)
 {
     LPCSTR getString = file.c_str();
@@ -25,6 +26,9 @@ SYSTEMTIME GetFileAttr(std::string file)
     return FileTimeLocal;
 };
 
+//compares two files and return the one that was created the nearest
+//used for selecting the most recent log file, but I should really do this for the video files too
+//for live log splitting
 bool GetNewerFile(std::string oldFile, std::string newFiles)
 {
     SYSTEMTIME oldTime = GetFileAttr(oldFile);
@@ -50,10 +54,10 @@ bool GetNewerFile(std::string oldFile, std::string newFiles)
     {
         return false;
     }
-
     return true;
 };
 
+//gets the most recent file like the function lists and has a default when only one file in directory
 void file_handling::GetMostRecentFile()
 {
     if (logFiles.size() <= 1)
@@ -74,6 +78,10 @@ void file_handling::GetMostRecentFile()
     currentLog = newestFile;
 };
 
+//gets the executable path but I changed my mind and made this portable to go off of the documents folder
+//now the config is stored in documents
+//should have the default location for everything be based on the directory in the users documents
+//why do I still have a running bool you can just close out of the window and leave everything always running
 file_handling::file_handling()
 {
     this->exePath = GetExeDirectory();
@@ -81,6 +89,7 @@ file_handling::file_handling()
 };
 
 //old and unused for testing
+//I should really remove this at some point
 bool file_handling::CheckForLogFiles()
 {
     for(const auto& entry : std::filesystem::directory_iterator(exePath.generic_string()))
@@ -101,6 +110,8 @@ bool file_handling::CheckForLogFiles(std::string directory)
     {
         if (entry.path().extension() == ".txt")
         {
+            //default naming scheme and if wow decides to change this later on this should be updated
+            //or if I get other people to coax me to try and adopt this for some other purpose
             if (entry.path().generic_string().find("WoWCombatLog") != std::string::npos)
             {
                 logFiles.push_back(entry.path().generic_string());
@@ -125,6 +136,8 @@ bool file_handling::CheckForVodFiles(std::string directory)
     return true;
 };
 
+//gets executable directory
+//this is basically unused now and when refactoring I should be able to delete this
 std::filesystem::path file_handling::GetExeDirectory()
 {
     wchar_t szPath[MAX_PATH];
@@ -132,6 +145,9 @@ std::filesystem::path file_handling::GetExeDirectory()
     return std::filesystem::path { szPath }.parent_path();
 };
 
+//converts difficulty types to enum for some case statements
+//I could just compare the strings but for some reason this seems like it would be the cooler option
+//why do I do the things that I do?
 DifficultyType convertToDifficultyTypeEnum (std::string& diff)
 {
     if (diff == "14")
@@ -156,6 +172,7 @@ DifficultyType convertToDifficultyTypeEnum (std::string& diff)
     }
 };
 
+//partial initializer and I am not initializing everything and should really do it properly when I refactor
 combat_log_events::combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget)
 {
     this->date = initDate;
@@ -164,12 +181,15 @@ combat_log_events::combat_log_events(std::string initDate, std::string initTime,
     this->target = initTarget;
 };
 
+//no params init used for live log detection
 combat_log::combat_log()
 {
     this->currentLine = 0;
     this->running = false;
 };
 
+//unused now it was when I had the different idea
+//will remove this when I refactor
 combat_log::combat_log(std::filesystem::path exePath)
 {
     this->exePath = exePath;
@@ -177,6 +197,11 @@ combat_log::combat_log(std::filesystem::path exePath)
     this->running = false;
 };
 
+//splits string based on a delimiter
+//I should really fix this so that way its much less janky
+//looking through logs there is one space between the date and time
+//two spaces between time and the actual combat event
+//should make a space counter and after the 3rd instance it outputs the final part so it should cut down on a second iterator
 std::vector<std::string> combat_log::SplitString(std::string str, char splitter)
 {
     std::vector<std::string> result;
@@ -203,11 +228,14 @@ std::vector<std::string> combat_log::SplitString(std::string str, char splitter)
     return result;
 };
 
+//checks to see if the first digit is a number
+//used to see if a combatlog event is a real event or recovering after a game crash/switching toons
 bool combat_log::CheckIfNumber(std::string str)
 {
     return isdigit(str[0]);
 };
 
+//converts a string to an enum because I thought it would be easier to sort by but its just kinda wasting iterations when I can just compare strings
 LogEventType convertToEnum (const std::string& str)
 {
     if (str == "ENCOUNTER_START")
@@ -236,6 +264,9 @@ LogEventType convertToEnum (const std::string& str)
     }
 };
 
+//reads a file for splitting I should change the name of this method during refactoring
+//or I could use some other kinda thing like to have some kinda enum for the splitting type when initially starting to write
+//so I dont really need to have two different methods that do effectively the same thing just one has a counter to only go over new ones
 bool combat_log::ReadFile(std::string fileName)
 {
     //gathers filename and creation date of text file
@@ -371,6 +402,8 @@ bool combat_log::ReadFile(std::string fileName)
     return true;
 };
 
+//basically the same as the function above but with an active line tracker for only using the current line to prevent duplicate entries during live splitting
+//the same as above where I should really cut down on the duplicate code and add in some way to not have as much duplicate code
 bool combat_log::ReadFileLive(std::string fileName)
 {
     //gathers filename and creation date of text file
@@ -461,6 +494,8 @@ bool combat_log::ReadFileLive(std::string fileName)
 
 
                     //builds log type with actions
+                    //this is what I should change to just store the raw value cause why did I seem to really want to use enums
+                    //I really question the decions that I make 4am honestly
                     LogEventType logType = convertToEnum(eventsClean[0]);
                     if (logType != OTHER)
                     {
@@ -501,6 +536,7 @@ bool combat_log::ReadFileLive(std::string fileName)
                 }
                 else
                 {
+                    //should prolly throw an error like crash detected in log and include a timestamp
                     throw std::runtime_error("\nError Parsing " + fileName + "\nLine: " + std::to_string(line) + " - Missing Date");
                 }
             }

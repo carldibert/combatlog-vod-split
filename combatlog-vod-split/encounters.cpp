@@ -7,27 +7,35 @@
 #include <thread>
 #include <future>
 
+//no parameter initializer
+//I should go over this while refactoring it so that way im not requiring anything or make it
+//so im not using totally diffy workflows for splitting and live logging
 Encounters_Ordered::Encounters_Ordered()
 {
     processed = false;
     failed = false;
 };
 
+//gets start time of each fight
 void Encounters_Ordered::GetStartTime(SYSTIME vid)
 {
     int extraHours = 0;
 
+    //in the case of the fight starting before 11:59pm and ending after midnight
     if (start.wHour < vid.wHour)
     {
         extraHours = 24;
     }
 
+    //gets the seconds of the video and converts the fight length into seconds
     int fightSeconds = ((start.wHour + extraHours) * 3600) + (start.wMinute * 60) + start.wSecond;
     int vidSeconds = (vid.wHour * 3600) + (vid.wMinute * 60) + vid.wSecond;
 
     this->startSeconds = fightSeconds - vidSeconds;
 };
 
+//processes video for async ideally for just the live mode but who knows when I refactor
+//this should be the standard for me and also shouldnt have needed to initialize another object
 bool ProcessVid(std::string inFile, std::string outFile, double start, double duration)
 {
     ffmpeg proc;
@@ -42,17 +50,26 @@ bool ProcessVid(std::string inFile, std::string outFile, double start, double du
     }
 }
 
+//runs through log for the live processing
+//I should have a better name for this function
 void Encounters_Total::RunThroughLog()
 {
+    //infinite loop to always run while live processing is enabled
     while (running)
     {
-        
+        //reads through live files and populates the ordered encounters
         files.log.ReadFileLive(files.log.fileName);
         PopulateEncounters(files.log);
         for (int i = 0; i < orderedEncounters.size(); i++)
         {
+            //only processes fights that have not been processed yet
+            //I should add some sort of failed constraint and have that output at the end
+            //but that would mean that I would need to have a way to 
             if (!orderedEncounters[i].processed)
             {
+                //when key level is non positive it treats the encounter like a raid
+                //this has worked with test data from SoD runs
+                //should include some kinda way to key off of if its a dungeon or raid during refactor
                 if (orderedEncounters[i].keyLevel <= 0)
                 {
                     orderedEncounters[i].GetStartTime(vid.startTime);
@@ -73,20 +90,25 @@ void Encounters_Total::RunThroughLog()
                         std::to_string(orderedEncounters[i].start.wDay) + "-" +
                         orderedEncounters[i].zone + "_" + std::to_string(orderedEncounters[i].keyLevel) + "_" + std::to_string(orderedEncounters[i].fightNumber) + ".mkv";
                 }
+                //waits on video to finish processing before continuing on
                 std::future<bool> asyncVideoProcess = std::async(&ProcessVid, orderedEncounters[i].inFilename.c_str(), orderedEncounters[i].outFilename.c_str(), orderedEncounters[i].startSeconds - 20, orderedEncounters[i].duration + 20);
                 bool result = asyncVideoProcess.get();
                 if (result)
                 {
+                    //when file gets succesfully split set to true to not get reprocessed
                     orderedEncounters[i].processed = true;
                 }
             }
         }
-        int j = 0;
+        //sleeps for 10 seconds inbetween iterations so it doesnt run indefinately and epxend too many resources
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
 };
 
+//split move processing
 bool Encounters_Total::processEncounters()
 {
+    //checking to see that there is a log and vod directories
     if (files.logFiles.size() == 0)
     {
         files.CheckForLogFiles(logDirectory);
@@ -95,10 +117,13 @@ bool Encounters_Total::processEncounters()
     {
         files.CheckForVodFiles(vodDirectory);
     }
+    //selects the active log in the log directory
+    //should only be one when logging
     if (files.log.fileName == "")
     {
         files.log.fileName = files.currentLog;
     }
+    //gets the vod directory and also dhould only be one 
     if (vid.fileName == "")
     {
         video_file vid;
@@ -107,6 +132,7 @@ bool Encounters_Total::processEncounters()
         this->vodStartTime = vid.startTime;
     }
     
+    //lets user know that the directory is being watched and ready to process a live split
     std::cout << "Watching " + files.currentLog + " for new encounters" << std::endl;
     running = true;
     std::thread logRunner(&Encounters_Total::RunThroughLog, this);
@@ -205,6 +231,7 @@ void PopulateEncounterList(std::vector<encounters>* encounterList, combat_log co
     }
 };
 
+//splits string with two different characters
 std::vector<int> SplitString(std::string str, char splitter)
 {
     std::vector<int> result;
@@ -231,6 +258,7 @@ std::vector<int> SplitString(std::string str, char splitter)
     return result;
 };
 
+//also self explanatory
 std::vector<int> SplitString(std::string str, char splitter, char splitter2)
 {
     std::vector<int> result;
@@ -257,6 +285,7 @@ std::vector<int> SplitString(std::string str, char splitter, char splitter2)
     return result;
 };
 
+//generates systime enum based off of fight data for comparisons sake
 void GenerateSysTime(Encounters_Ordered* temp, int year)
 {
     std::vector<int> startTime = SplitString(temp->startTime, ':', '.');
@@ -464,23 +493,27 @@ void Encounters_Total::OrderEncounters()
     }
 };
 
+//this should do something in the future
 Encounters_Total::Encounters_Total()
 {
 
 };
 
+//this should also do something
 Encounters_Total::Encounters_Total(std::vector<combat_log> contents)
 {
     PopulateEncounterList(&encounterList, contents);
     OrderEncounter(&orderedEncounters, encounterList);
 };
 
+//why did I not just decide to use one generic style of things instead of using multiples
 void Encounters_Total::PopulateEncounters(std::vector<combat_log> contents)
 {
     PopulateEncounterList(&encounterList, contents);
     OrderEncounter(&orderedEncounters, encounterList);
 };
 
+//I question the things that I do sometimes
 void Encounters_Total::PopulateEncounters(combat_log contents)
 {
     PopulateEncounterList(&encounterList, contents);
