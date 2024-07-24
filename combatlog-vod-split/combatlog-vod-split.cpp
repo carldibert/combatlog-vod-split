@@ -132,41 +132,7 @@ void live_mode_processing(configuration* conf)
     fights.vodDirectory = conf->video_directory;
 
     fights.processEncounters();
-    
-
-    /*
-    combat_log log;
-    file_handling files;
-    Encounters_Total fights;
-    int cont = 1;
-    //files.CheckForLogFiles(conf->log_directory);
-    //files.CheckForVodFiles(conf->video_directory);
-    //video_file vid(files.vodFiles[0]);
-    //files.log = log;
-    //files.log.running = true;
-
-    fights.files = files;
-    fights.logDirectory = conf->log_directory;
-    
-
-    //lists out the currently selected log file based on the most recent log file
-    std::cout << "Currently selected log file: " + files.currentLog << std::endl;
-
-    files.running = true;
-    //std::thread logProcessor(ProcessEncountersLive, &fights, &files, conf->log_directory, vid.startTime, vid.fileName);
-
-    Sleep(3000);
-
-    while (files.running)
-    {
-        int f = 0;
-    }
-
-
-    int i = 0;
-    */
-
-    
+    while (1);
 };
 
 //checks to see if vod is within the combat log windows
@@ -310,6 +276,8 @@ int main()
     {
         live_mode_processing(&conf);
     }
+
+    
 
     return 0;
 };

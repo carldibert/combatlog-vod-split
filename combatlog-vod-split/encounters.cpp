@@ -107,17 +107,10 @@ bool Encounters_Total::processEncounters()
         this->vodStartTime = vid.startTime;
     }
     
+    std::cout << "Watching " + files.currentLog + " for new encounters" << std::endl;
     running = true;
     std::thread logRunner(&Encounters_Total::RunThroughLog, this);
-
-    while (running)
-    {
-        int j = 0;
-    }
-    
-    
-
-    
+    while (1);
     return true;
 }
 
@@ -402,6 +395,7 @@ void Encounters_Total::OrderEncounters()
             else if (var.eventType == 1 && tmp.startTime != "")
             {
                 tmp.endTime = var.time;
+                tmp.keyLevel = -1;
             }
             else if (var.eventType == 2)
             {
