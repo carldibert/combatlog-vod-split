@@ -207,6 +207,7 @@ int main()
     //sets the mode for the driver
     driver driver;
     driver.mode = conf.mode;
+    driver.SetCombatLogLocation(conf.logDirectory);
 
     //runs based on mode that is set up within config
     if (conf.mode == "split")

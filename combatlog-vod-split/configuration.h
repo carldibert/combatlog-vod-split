@@ -8,9 +8,13 @@ class configuration
     public:
         
         std::filesystem::path exePath;
-        std::string video_directory;
-        std::string log_directory;
+        std::string videoDirectory;
+        std::string logDirectory;
         std::string mode;
         bool configFound;
         configuration();
+
+        //to be depricated
+        std::string video_directory;
+        std::string log_directory;
 };

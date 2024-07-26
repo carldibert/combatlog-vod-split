@@ -54,11 +54,11 @@ configuration::configuration()
                     std::string setting = line.substr(0, found);
                     if (setting == "video_directory")
                     {
-                        this->video_directory = line.substr(found + 1, line.size() - 1);
+                        this->videoDirectory = line.substr(found + 1, line.size() - 1);
                     }
                     else if (setting == "log_directory")
                     {
-                        this->log_directory = line.substr(found + 1, line.size() - 1);
+                        this->logDirectory = line.substr(found + 1, line.size() - 1);
                     }
                     else if (setting == "mode")
                     {
@@ -73,12 +73,12 @@ configuration::configuration()
         }
 
         //checks for missing settings
-        if (video_directory == "")
+        if (videoDirectory == "")
         {
             std::cout << "Error setting video directory - please check config file" << std::endl;
             this->configFound = false;
         }
-        if (log_directory == "")
+        if (logDirectory == "")
         {
             std::cout << "Error setting log directory - please check config file" << std::endl;
             this->configFound = false;
