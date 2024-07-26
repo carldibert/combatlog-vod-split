@@ -10,45 +10,34 @@
 
 #include "configuration.h"
 
-//for once something that actually was thought out
-//initalizes the configuration to the user's documents directory
-//this is where the DLLs and executable should be stored
-//but they can put it wherever but the config needs to be there to read from unless I let it store in the .exe
-//ill need to ask people what they think idk im not their real dad
-void configuration::SetConfiguration()
+
+//gets directory of executable which is where the the config file is stored
+std::filesystem::path GetExeDirectory()
 {
-    //gathers document folder location
-    TCHAR szPath[MAX_PATH];
-    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, szPath);
-    std::wstring arr_w(szPath);
-    std::string tmp(arr_w.begin(), arr_w.end());
-    this->my_documents = tmp;
+    wchar_t szPath[MAX_PATH];
+    GetModuleFileName(NULL, szPath, MAX_PATH);
+    return std::filesystem::path { szPath }.parent_path();
 };
 
-//checks for a configuration file
-bool configuration::CheckForConfigFile()
+configuration::configuration()
 {
-    //prolly shouldnt have this since I am going to be packaging this in one directory
-    //checks if combat_log_vod_split directory exists and create it does not exist
-    std::string configDirectory = my_documents + "\\combat_log_vod_split";
-    std::filesystem::path tmp = configDirectory;
-    CreateDirectory(tmp.c_str(), NULL);
+    //gets the exe path to get the config file
+    this->exePath = GetExeDirectory();
 
-    //checks to see if configuration file is missing
-    //if missing it creates a blank config file and should prolly include one with some defaults either in the readme or by default
-    //I should also really look at where the default log location is
-    if (!std::filesystem::exists(configDirectory + "\\config.conf"))
+    //checks if there is a config file within the executable's directory
+    //if it is not there generates a sample config
+    if (!std::filesystem::exists(exePath.string() + "\\config.conf"))
     {
-        std::ofstream outfile(configDirectory + "\\config.conf");
+        std::ofstream outfile(exePath.string() + "\\config.conf");
         outfile << "video_directory=\nlog_directory=\nmode=";
         outfile.close();
-        std::cout << "Configuration file not found please configure" << std::endl;
-        return false;
+        std::cout << "Configuration file not found please configure and restart the application" << std::endl;
+        this->configFound = false;
     }
     else
     {
         std::string line;
-        std::ifstream file(configDirectory + "\\config.conf");
+        std::ifstream file(exePath.string() + "\\config.conf");
 
         //reads config file and sets values locally in the program
         while (std::getline(file, line))
@@ -87,20 +76,19 @@ bool configuration::CheckForConfigFile()
         if (video_directory == "")
         {
             std::cout << "Error setting video directory - please check config file" << std::endl;
-            return false;
+            this->configFound = false;
         }
         if (log_directory == "")
         {
             std::cout << "Error setting log directory - please check config file" << std::endl;
-            return false;
+            this->configFound = false;
         }
         if (mode == "")
         {
             std::cout << "Error setting mode - please check config file" << std::endl;
-            return false;
+            this->configFound = false;
         }
-    }
 
-    //config file has loaded everything properly
-    return true;
+        this->configFound = true;
+    }
 };

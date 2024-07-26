@@ -63,6 +63,15 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "condition_variable": "cpp",
+        "coroutine": "cpp",
+        "resumable": "cpp",
+        "functional": "cpp",
+        "future": "cpp",
+        "list": "cpp",
+        "mutex": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp"
     }
 }

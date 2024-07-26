@@ -14,6 +14,9 @@
 #include "configuration.h"
 #include "video_file.h"
 
+//current after refactoring
+#include "driver.h"
+
 //returns the start or endpoints
 double GetStartOrEndPoints(SYSTIME fight, SYSTIME vid)
 {
@@ -195,11 +198,14 @@ int main()
 {
     //checks for configuration file and returns error when missing information
     configuration conf;
-    conf.SetConfiguration();
-    if (!conf.CheckForConfigFile())
+    if (!conf.configFound)
     {
+        std::cout << "Unable to find configuration file" << std::endl;
         return 1;
     }
+
+    driver driver;
+    driver.mode = conf.mode;
 
     //runs based on mode that is set up within config
     if (conf.mode == "split")
