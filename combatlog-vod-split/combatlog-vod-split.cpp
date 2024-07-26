@@ -204,6 +204,7 @@ int main()
         return 1;
     }
 
+    //sets the mode for the driver
     driver driver;
     driver.mode = conf.mode;
 
