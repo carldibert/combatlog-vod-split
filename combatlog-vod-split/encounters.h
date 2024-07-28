@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "video_file.h"
+#include <iostream>
+#include <sstream>
 
 #include "file_handling.h"
 #include "video_file.h"
@@ -13,6 +14,62 @@ enum InstanceType
     OpenWorld = 2
 };
 
+enum LogEventType
+{
+    ENCOUNTER_START = 0,
+    ENCOUNTER_END = 1,
+    ZONE_CHANGE = 2,
+    CHALLENGE_MODE_START = 3,
+    CHALLENGE_MODE_END = 4,
+    OTHER = 99
+};
+
+enum DifficultyType
+{
+    Normal = 14,
+    Heroic = 15,
+    Mythic = 16,
+    LFR = 17,
+    World = 100,
+    Keystone = 101
+};
+
+class encounters_unfiltered
+{
+    public:
+        SYSTIME time;
+        LogEventType eventType;
+        std::string name;
+        DifficultyType difficulty;
+        int keyLevel;
+};
+
+class encounters
+{
+    public:
+        std::string encounterName;
+        SYSTIME startTime;
+        SYSTIME endTime;
+        std::string zone;
+        std::string difficulty;
+        int duration;
+        int fightNumber;
+};
+
+class encounter_list
+{
+    public:
+        int currentLine;
+        std::vector<encounters_unfiltered> unfilteredEncounters;
+        std::vector<encounters> fights;
+
+        encounter_list(bool liveMode);
+        void ReadFromLog(std::string fileName);
+        void FormatFights();
+};
+
+
+/*
 class encounters
 {
     public:
@@ -69,5 +126,6 @@ class Encounters_Total
         void RunThroughLog();
         void OrderEncounters();
     private:
-        std::vector<encounters> encounterList;      
+        std::vector<encounters> encounterList;
 };
+*/

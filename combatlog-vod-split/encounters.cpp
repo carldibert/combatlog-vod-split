@@ -6,235 +6,14 @@
 #include <string>
 #include <thread>
 #include <future>
+#include <fstream> 
+#include <iostream> 
+#include <string> 
 
-//no parameter initializer
-//I should go over this while refactoring it so that way im not requiring anything or make it
-//so im not using totally diffy workflows for splitting and live logging
-Encounters_Ordered::Encounters_Ordered()
+//splits a string based off of a delimiter
+std::vector<std::string> SplitStringCombatLog(std::string str, char splitter)
 {
-    processed = false;
-    failed = false;
-};
-
-//gets start time of each fight
-void Encounters_Ordered::GetStartTime(SYSTIME vid)
-{
-    int extraHours = 0;
-
-    //in the case of the fight starting before 11:59pm and ending after midnight
-    if (start.wHour < vid.wHour)
-    {
-        extraHours = 24;
-    }
-
-    //gets the seconds of the video and converts the fight length into seconds
-    int fightSeconds = ((start.wHour + extraHours) * 3600) + (start.wMinute * 60) + start.wSecond;
-    int vidSeconds = (vid.wHour * 3600) + (vid.wMinute * 60) + vid.wSecond;
-
-    this->startSeconds = fightSeconds - vidSeconds;
-};
-
-//processes video for async ideally for just the live mode but who knows when I refactor
-//this should be the standard for me and also shouldnt have needed to initialize another object
-bool ProcessVid(std::string inFile, std::string outFile, double start, double duration)
-{
-    ffmpeg proc;
-    if (proc.ProcessFile(inFile.c_str(), outFile.c_str(), start - 20, start + duration + 20))
-    {
-        std::cout << "Processing completed" << std::endl;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-//runs through log for the live processing
-//I should have a better name for this function
-void Encounters_Total::RunThroughLog()
-{
-    //infinite loop to always run while live processing is enabled
-    while (running)
-    {
-        //reads through live files and populates the ordered encounters
-        files.log.ReadFileLive(files.log.fileName);
-        PopulateEncounters(files.log);
-        for (int i = 0; i < orderedEncounters.size(); i++)
-        {
-            //only processes fights that have not been processed yet
-            //I should add some sort of failed constraint and have that output at the end
-            //but that would mean that I would need to have a way to 
-            if (!orderedEncounters[i].processed)
-            {
-                //when key level is non positive it treats the encounter like a raid
-                //this has worked with test data from SoD runs
-                //should include some kinda way to key off of if its a dungeon or raid during refactor
-                if (orderedEncounters[i].keyLevel <= 0)
-                {
-                    orderedEncounters[i].GetStartTime(vid.startTime);
-                    orderedEncounters[i].inFilename = vid.fileName;
-                    orderedEncounters[i].outFilename = logDirectory +
-                        std::to_string(orderedEncounters[i].start.wYear) + "_" +
-                        std::to_string(orderedEncounters[i].start.wMonth) + "-" +
-                        std::to_string(orderedEncounters[i].start.wDay) + "-" +
-                        orderedEncounters[i].name + "_" + orderedEncounters[i].difficulty + "_" + std::to_string(orderedEncounters[i].fightNumber) + ".mkv";
-                }
-                else
-                {
-                    orderedEncounters[i].GetStartTime(vid.startTime);
-                    orderedEncounters[i].inFilename = vid.fileName;
-                    orderedEncounters[i].outFilename = logDirectory +
-                        std::to_string(orderedEncounters[i].start.wYear) + "_" +
-                        std::to_string(orderedEncounters[i].start.wMonth) + "-" +
-                        std::to_string(orderedEncounters[i].start.wDay) + "-" +
-                        orderedEncounters[i].zone + "_" + std::to_string(orderedEncounters[i].keyLevel) + "_" + std::to_string(orderedEncounters[i].fightNumber) + ".mkv";
-                }
-                //waits on video to finish processing before continuing on
-                std::future<bool> asyncVideoProcess = std::async(&ProcessVid, orderedEncounters[i].inFilename.c_str(), orderedEncounters[i].outFilename.c_str(), orderedEncounters[i].startSeconds - 20, orderedEncounters[i].duration + 20);
-                bool result = asyncVideoProcess.get();
-                if (result)
-                {
-                    //when file gets succesfully split set to true to not get reprocessed
-                    orderedEncounters[i].processed = true;
-                }
-            }
-        }
-        //sleeps for 10 seconds inbetween iterations so it doesnt run indefinately and epxend too many resources
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-    }
-};
-
-//split move processing
-bool Encounters_Total::processEncounters()
-{
-    //checking to see that there is a log and vod directories
-    if (files.logFiles.size() == 0)
-    {
-        files.CheckForLogFiles(logDirectory);
-    }
-    if (files.vodFiles.size() == 0)
-    {
-        files.CheckForVodFiles(vodDirectory);
-    }
-    //selects the active log in the log directory
-    //should only be one when logging
-    if (files.log.fileName == "")
-    {
-        files.log.fileName = files.currentLog;
-    }
-    //gets the vod directory and also dhould only be one 
-    if (vid.fileName == "")
-    {
-        video_file vid;
-        vid.InitFile(files.vodFiles[0]);
-        this->vid = vid;
-        this->vodStartTime = vid.startTime;
-    }
-    
-    //lets user know that the directory is being watched and ready to process a live split
-    std::cout << "Watching " + files.currentLog + " for new encounters" << std::endl;
-    running = true;
-    std::thread logRunner(&Encounters_Total::RunThroughLog, this);
-    while (1);
-    return true;
-}
-
-//get difficulty name
-std::string GetDifficultyName(DifficultyType diff)
-{
-    switch(diff)
-    {
-        case 14:
-            return "Normal";
-            break;
-        case 15:
-            return "Heroic";
-            break;
-        case 16:
-            return "Mythic";
-            break;
-        case 17:
-            return "LFR";
-            break;
-    }
-}
-
-//gathers info from list and sanitizes the data
-void PopulateEncounterList(std::vector<encounters>* encounterList, std::vector<combat_log> contents)
-{
-    for (auto& var : contents)
-    {
-        for (auto& evnt : var.combatLogEvents)
-        {
-            encounters tmp;
-            tmp.zone = evnt.target;
-            if (evnt.difficulty == 100 && evnt.keyLevel < 0)
-            {
-                tmp.instanceType = OpenWorld;
-            }
-            else if (evnt.logAction == 3)
-            {
-                tmp.instanceType = Dungeon;
-                tmp.dungeonName = evnt.dungeonName;
-                tmp.keyLevel = evnt.keyLevel;
-            }
-            else if (evnt.logAction == 4)
-            {
-                tmp.instanceType = Dungeon;
-            }
-            else if (evnt.difficulty == 14 || evnt.difficulty == 15 || evnt.difficulty == 16 || evnt.difficulty == 17)
-            {
-                tmp.instanceType = Raid;
-                tmp.difficulty = GetDifficultyName(evnt.difficulty);
-            }
-            tmp.time = evnt.time;
-            tmp.date = evnt.date;
-            tmp.eventType = evnt.logAction;
-            tmp.year = var.createDate.wYear;
-            encounterList->push_back(tmp);
-        }
-    }
-};
-
-//gathers info from list and sanitizes the data
-void PopulateEncounterList(std::vector<encounters>* encounterList, combat_log contents)
-{
-    for (auto& evnt : contents.combatLogEvents)
-    {
-        encounters tmp;
-        tmp.zone = evnt.target;
-        if (evnt.difficulty == 100 && evnt.keyLevel < 0)
-        {
-            tmp.instanceType = OpenWorld;
-        }
-        else if (evnt.logAction == 3)
-        {
-            tmp.instanceType = Dungeon;
-            tmp.dungeonName = evnt.dungeonName;
-            tmp.keyLevel = evnt.keyLevel;
-        }
-        else if (evnt.logAction == 4)
-        {
-            tmp.instanceType = Dungeon;
-        }
-        else if (evnt.difficulty == 14 || evnt.difficulty == 15 || evnt.difficulty == 16 || evnt.difficulty == 17)
-        {
-            tmp.instanceType = Raid;
-            tmp.difficulty = GetDifficultyName(evnt.difficulty);
-        }
-        tmp.time = evnt.time;
-        tmp.date = evnt.date;
-        tmp.eventType = evnt.logAction;
-        tmp.year = contents.createDate.wYear;
-        encounterList->push_back(tmp);
-    }
-};
-
-//splits string with two different characters
-std::vector<int> SplitString(std::string str, char splitter)
-{
-    std::vector<int> result;
+    std::vector<std::string> result;
     std::string current = "";
     for (int i = 0; i < str.size(); i++)
     {
@@ -242,7 +21,7 @@ std::vector<int> SplitString(std::string str, char splitter)
         {
             if (current != "")
             {
-                result.push_back(stoi(current));
+                result.push_back(current);
                 current = "";
             }
             continue;
@@ -252,274 +31,372 @@ std::vector<int> SplitString(std::string str, char splitter)
 
     if (current.size() != 0)
     {
-        result.push_back(stoi(current));
+        result.push_back(current);
     }
 
     return result;
 };
 
-//also self explanatory
-std::vector<int> SplitString(std::string str, char splitter, char splitter2)
+//checks to see if the first digit is a number
+//used to see if a combatlog event is a real event or recovering after a game crash/switching toons
+bool CheckIfNumber(std::string str)
 {
-    std::vector<int> result;
-    std::string current = "";
-    for (int i = 0; i < str.size(); i++)
+    return isdigit(str[0]);
+};
+
+//gets the file creation date
+SYSTEMTIME GetFileCreationDate(std::string fileName)
+{
+    LPCSTR getString = fileName.c_str();
+    WIN32_FILE_ATTRIBUTE_DATA attrs;
+    GetFileAttributesExA(getString, GetFileExInfoStandard, &attrs);
+    SYSTEMTIME FileTime = { 0 };
+    SYSTEMTIME OutFileTimeLocal = { 0 };
+    FileTimeToSystemTime(&attrs.ftCreationTime, &FileTime);
+    SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &OutFileTimeLocal);
+    return OutFileTimeLocal;
+};
+
+//gets an unformatted line with the system date being resolved
+SYSTIME GetUnformattedEncounter(std::vector<std::string> actionEvent, std::string fileName)
+{
+    std::vector<std::string> day = SplitStringCombatLog(actionEvent[0], '/');
+    std::vector<std::string> time = SplitStringCombatLog(actionEvent[1], ':');
+
+    SYSTEMTIME fileTime = GetFileCreationDate(fileName);
+
+    SYSTIME eventTime
     {
-        if (str[i] == splitter || str[i] == splitter2)
+        fileTime.wYear,
+        std::stoi(day[0]),
+        std::stoi(day[1]),
+        std::stoi(time[0]),
+        std::stoi(time[1]),
+        std::stoi(time[2]),
+        0
+    };
+    return eventTime;
+};
+
+//splits the combat log into a usable format because what is wow's formatting
+std::vector<std::string> SplitCombatLogEvent(std::string line)
+{
+    std::vector<std::string> result;
+    
+    //counts everything after the first 3 spaces in the combatlog because blizz has some weird formatting
+    std::string temp = "";
+    int spaceCounter = 0;
+    for (int i = 0; i < line.size(); i++)
+    {
+        if (spaceCounter > 2)
         {
-            if (current != "")
-            {
-                result.push_back(stoi(current));
-                current = "";
-            }
-            continue;
+            temp += line[i];
         }
-        current += str[i];
+        else
+        {
+            if (line[i] == ' ')
+            {
+                spaceCounter++;
+            }
+        }
     }
+    std::vector<std::string> working = SplitStringCombatLog(temp, ',');
 
-    if (current.size() != 0)
+    //filters based on the quote being in the first character of a CSV entry and removes it as well as the following quote in the following entry
+    for (int i = 0; i < working.size(); i++)
     {
-        result.push_back(stoi(current));
+        if (working[i][0] != 34)
+        {
+            result.push_back(working[i]);
+        }
+        else
+        {
+            working[i].erase(0, 1);
+            //because the compiler doesn't like if I dont check for this
+            int e = working[i].size() - 1;
+            if (working[i][e] == 34)
+            {
+                result.push_back(working[i].erase(e, e));
+            }
+            else
+            {
+                std::string temp = working[i] + ", " + working[i + 1].erase(working[i + 1].size() - 1, working[i + 1].size());
+                result.push_back(temp);
+                i++;
+            }            
+        }
+        
     }
 
     return result;
 };
 
-//generates systime enum based off of fight data for comparisons sake
-void GenerateSysTime(Encounters_Ordered* temp, int year)
+//gets the difficulty type from a string for the sake of filtering later on
+//have an idea that it would only split mythic or something later on down the line
+DifficultyType GetDifficultyTypeFromString(std::string line)
 {
-    std::vector<int> startTime = SplitString(temp->startTime, ':', '.');
-    std::vector<int> endTime = SplitString(temp->endTime, ':', '.');
-    std::vector<int> dates = SplitString(temp->date, '/');
-    
-    SYSTIME start
+    switch (std::stoi(line))
     {
-        year,
-        dates[0],
-        dates[1],
-        startTime[0],
-        startTime[1],
-        startTime[2],
-        startTime[3]
-    };
-    SYSTIME end
+        case 14:
+            return Normal;
+        case 15:
+            return Heroic;
+        case 16:
+            return Mythic;
+        case 17:
+            return LFR;
+        default:
+            return World;
+    }
+};
+
+//reads through the combatlog and has an unfiltered raw data before getting the specifics that are formatted well
+void ReadCombatLog(std::vector<encounters_unfiltered>* unfiltered, std::string line, std::string fileName)
+{
+    //reserves memory and filters the combatlog in a few different ways because wow doesnt like to zero out the lines
+    encounters_unfiltered tmp;
+    std::vector<std::string> actionEvent = SplitStringCombatLog(line, ' ');
+    std::vector<std::string> combatLogEvent = SplitCombatLogEvent(line);
+
+    //iterates through the combatlog and populates the fields in the object with trimmed down info
+    //don't need to have all of the specific information just the start stop and following along the zones
+    if (combatLogEvent[0] == "ENCOUNTER_START" ||
+        combatLogEvent[0] == "ENCOUNTER_END" ||
+        combatLogEvent[0] == "ZONE_CHANGE" ||
+        combatLogEvent[0] == "CHALLENGE_MODE_START" ||
+        combatLogEvent[0] == "CHALLENGE_MODE_END")
     {
-        year,
-        dates[0],
-        dates[1],
-        endTime[0],
-        endTime[1],
-        endTime[2],
-        endTime[3]
-    };
-    temp->start = start;
-    temp->end = end;
-    
-    //gets fight duration in seconds
+        tmp.time = GetUnformattedEncounter(actionEvent, fileName);
+        if (combatLogEvent[0] == "ENCOUNTER_START")
+        {
+            tmp.eventType = ENCOUNTER_START;
+            tmp.name = combatLogEvent[2];
+            tmp.keyLevel = -1;
+            tmp.difficulty = GetDifficultyTypeFromString(combatLogEvent[3]);
+            unfiltered->push_back(tmp);
+        }
+        else if (combatLogEvent[0] == "ENCOUNTER_END")
+        {
+            tmp.eventType = ENCOUNTER_END;
+            tmp.name = combatLogEvent[2];
+            tmp.keyLevel = -1;
+            tmp.difficulty = GetDifficultyTypeFromString(combatLogEvent[3]);
+            unfiltered->push_back(tmp);
+        }
+        else if (combatLogEvent[0] == "ZONE_CHANGE")
+        {
+            tmp.eventType = ZONE_CHANGE;
+            tmp.name = combatLogEvent[2];
+            tmp.difficulty = GetDifficultyTypeFromString(combatLogEvent[3]);
+            unfiltered->push_back(tmp);
+        }
+        else if (combatLogEvent[0] == "CHALLENGE_MODE_START")
+        {
+            tmp.eventType = CHALLENGE_MODE_START;
+            tmp.name = combatLogEvent[1];
+            tmp.keyLevel = std::stoi(combatLogEvent[4]);
+            tmp.difficulty = Keystone;
+            unfiltered->push_back(tmp);
+        }
+        else if (combatLogEvent[0] == "CHALLENGE_MODE_END")
+        {
+            if (std::stoi(combatLogEvent[3]) > 0)
+            {
+                tmp.eventType = CHALLENGE_MODE_END;
+                tmp.name = "";
+                tmp.keyLevel = std::stoi(combatLogEvent[3]);
+                tmp.difficulty = Keystone;
+                unfiltered->push_back(tmp);
+            }
+        }
+    }
+};
+
+//used to get the value of the enum for the purpose of the filename
+std::string GetDifficultyValue(DifficultyType difficulty)
+{
+    switch (difficulty)
+    {
+        case (Normal):
+            return "Normal";
+        case (Heroic):
+            return "Heroic";
+        case (Mythic):
+            return "Mythic";
+        case (LFR):
+            return "LFR";
+    }
+};
+
+//gets fight duration in seconds
+int GetDuration(SYSTIME startTime, SYSTIME endTime)
+{
+    //used in the case a fight starts before midnight and ends after the clock rolls over to the next day
     int tmpEndHour;
-    if (end.wHour == 0 && start.wHour == 23)
+    if (endTime.wHour == 0 && startTime.wHour == 23)
     {
         tmpEndHour = 24;
     }
     else
     {
-        tmpEndHour = end.wHour;
+        tmpEndHour = endTime.wHour;
     }
-    int dur = ((tmpEndHour - start.wHour) * 60) + ((end.wMinute - start.wMinute) * 60) + (end.wSecond - start.wSecond);
-    temp->duration = ((tmpEndHour - start.wHour) * 60) + ((end.wMinute - start.wMinute) * 60) + (end.wSecond - start.wSecond);
+    return ((tmpEndHour - startTime.wHour) * 3600) + ((endTime.wMinute - startTime.wMinute) * 60) + (endTime.wSecond - startTime.wSecond);
 };
 
-//orders encounters with their appropriate start and end times + dates
-void OrderEncounter(std::vector<Encounters_Ordered>* orderedEncounters, std::vector<encounters>encounterList)
+//formats fights into a usable format for populating the video file information
+void encounter_list::FormatFights()
 {
-    Encounters_Ordered tmp;
+    encounters tmp;
     std::string currentZone;
-    for (auto& var : encounterList)
+    for (auto& var : unfilteredEncounters)
     {
-        //when instance type of 0 for retil or 2 for classic sets the start time and difficulty
-        //when instance type is a key it sets the key level
-        if (var.instanceType == 0 || var.instanceType == 2)
+        //filters based off of the event type in log
+        //uses zone filtering to work with classic andys and their speed run logs
+        switch (var.eventType)
         {
-            if (var.eventType == 0)
-            {
-                tmp.startTime = var.time;
-                tmp.difficulty = var.difficulty;
-            }
-            else if (var.eventType == 1 && tmp.startTime != "")
-            {
-                tmp.endTime = var.time;
-            }
-            else if (var.eventType == 2)
-            {
-                currentZone = var.zone;
-            }
-            tmp.name = var.zone;
-        }
-        else if (var.instanceType == 1)
-        {
-            if (var.eventType == 3)
-            {
-                tmp.startTime = var.time;
-                tmp.name = var.dungeonName;
-                tmp.keyLevel = var.keyLevel;
-                currentZone = var.dungeonName;
-            }
-            else if (var.eventType == 4 && tmp.startTime != "")
-            {
-                tmp.endTime = var.time;
-            }
-        }
-        else if (var.instanceType == 2 && var.zone != "0")
-        {
-            currentZone = var.zone;
-        }
-        if (tmp.endTime != "")
-        {
-            tmp.zone = currentZone;
-            tmp.date = var.date;
-            if (orderedEncounters->size() > 0)
-            {
-                int fightNumber = 1;
-                for (auto& comp : *orderedEncounters)
+            case ENCOUNTER_START:
+                if (var.difficulty != 100)
                 {
-                    if (comp.name == tmp.name && comp.difficulty == tmp.difficulty)
-                    {
-                        fightNumber++;
-                    }
+                    tmp.encounterName = var.name;
+                    tmp.startTime = var.time;
+                    tmp.difficulty = GetDifficultyValue(var.difficulty);
+                    tmp.zone = currentZone;
                 }
-                tmp.fightNumber = fightNumber;
-            }
-            else
-            {
-                tmp.fightNumber = 1;
-            }
-
-            //generates time of encounters and does not add in fights shorter than 5 seconds for boss resets
-            GenerateSysTime(&tmp, var.year);
-            if (tmp.duration > 15)
-            {
-                orderedEncounters->push_back(tmp);
-            } 
-            tmp = Encounters_Ordered();
+                break;
+            case ENCOUNTER_END:
+                if (var.difficulty != 100)
+                {
+                    tmp.endTime = var.time;
+                    tmp.duration = GetDuration(tmp.startTime, tmp.endTime);
+                    if (tmp.duration > 20)
+                    {
+                        tmp.fightNumber = -1;
+                        this->fights.push_back(tmp);
+                    }
+                    tmp = encounters();
+                }
+                break;
+            case ZONE_CHANGE:
+                currentZone = var.name;
+                break;
+            case CHALLENGE_MODE_START:
+                tmp.encounterName = var.name;
+                tmp.startTime = var.time;
+                tmp.difficulty = std::to_string(var.keyLevel);
+                tmp.zone = currentZone;
+                break;
+            case CHALLENGE_MODE_END:
+                tmp.endTime = var.time;
+                tmp.duration = GetDuration(tmp.startTime, tmp.endTime);
+                if (tmp.duration > 20)
+                {
+                    tmp.fightNumber = -1;
+                    this->fights.push_back(tmp);
+                }
+                tmp = encounters();
+                break;
         }
+    };
+    
+    //used to calculate the amount of fights that have occured so it lines up with warcraftlogs
+    //I think 20 seconds is the duration I should use im not sure
+    int fight = 1;
+    for (auto& var : fights)
+    {
+        for (int i = 0; i < fights.size(); i++)
+        {
+            if (fights[i].fightNumber != -1)
+            {
+                if (fights[i].encounterName == var.encounterName)
+                {
+                    fight++;
+                }
+            }
+        }
+        var.fightNumber = fight;
+        fight = 1;
+    }
+    
+    //empties the unfiltered encounters for the live processing purposes
+    while (!unfilteredEncounters.empty())
+    {
+        unfilteredEncounters.pop_back();
     }
 };
 
-//orders encounters with their appropriate start and end times + dates
-void Encounters_Total::OrderEncounters()
+//reads from the log
+void encounter_list::ReadFromLog(std::string fileName)
 {
-    Encounters_Ordered tmp;
-    std::string currentZone;
-    for (auto& var : encounterList)
-    {
-        //when instance type of 0 for retil or 2 for classic sets the start time and difficulty
-        //when instance type is a key it sets the key level
-        if (var.instanceType == 0 || var.instanceType == 2)
-        {
-            if (var.eventType == 0)
-            {
-                tmp.startTime = var.time;
-                tmp.difficulty = var.difficulty;
-            }
-            else if (var.eventType == 1 && tmp.startTime != "")
-            {
-                tmp.endTime = var.time;
-                tmp.keyLevel = -1;
-            }
-            else if (var.eventType == 2)
-            {
-                currentZone = var.zone;
-            }
-            tmp.name = var.zone;
-        }
-        else if (var.instanceType == 1)
-        {
-            if (var.eventType == 3)
-            {
-                tmp.startTime = var.time;
-                tmp.name = var.dungeonName;
-                tmp.keyLevel = var.keyLevel;
-                currentZone = var.dungeonName;
-            }
-            else if (var.eventType == 4 && tmp.startTime != "")
-            {
-                tmp.endTime = var.time;
-            }
-        }
-        else if (var.instanceType == 2 && var.zone != "0")
-        {
-            currentZone = var.zone;
-        }
-        if (tmp.endTime != "")
-        {
-            tmp.zone = currentZone;
-            tmp.date = var.date;
-            if (orderedEncounters.size() > 0)
-            {
-                int fightNumber = 1;
-                for (auto& comp : orderedEncounters)
-                {
-                    if (comp.name == tmp.name && comp.difficulty == tmp.difficulty)
-                    {
-                        fightNumber++;
-                    }
-                }
-                tmp.fightNumber = fightNumber;
-            }
-            else
-            {
-                tmp.fightNumber = 1;
-            }
+    std::vector<std::string> linesInFile;
+    
+    int line = 1;
+    std::string combatLogActiveLine;
+    std::ifstream file(fileName);
+    std::vector<encounters_unfiltered> unfiltered;
 
-            //generates time of encounters and does not add in fights shorter than 5 seconds for boss resets
-            GenerateSysTime(&tmp, var.year);
-            if (tmp.duration > 15)
+    while (std::getline(file, combatLogActiveLine))
+    {
+        if (currentLine == -1)
+        {
+            try
             {
-                bool contains = false;
-                for (auto& comp : orderedEncounters)
+                //checks to see if the first digit is a number to check in case of a crash
+                if (CheckIfNumber(combatLogActiveLine))
                 {
-                    if (tmp.start.wMinute == comp.start.wMinute && tmp.start.wSecond == comp.start.wSecond)
-                    {
-                        contains = true;
-                    }
+                    //runs through the combatlog and adds events to vector
+                    ReadCombatLog(&unfiltered, combatLogActiveLine, fileName);
                 }
-                if (!contains)
+                else
                 {
-                    orderedEncounters.push_back(tmp);
+                    throw std::runtime_error("\nError Parsing " + fileName + "\nLine: " + std::to_string(line) + " - Missing Date");
                 }
             }
-            tmp = Encounters_Ordered();
+            //error handling which is mostly just to catch if the log file wasnt updated after a crash
+            catch (const std::runtime_error& error)
+            {
+                std::cout << error.what() << '\n';
+            }
+            line++;
         }
+        //this is for the live processing ill handle this later
+        else
+        {
+            if (line >= currentLine)
+            {
+                try
+                {
+                    if (CheckIfNumber(combatLogActiveLine))
+                    {
+                        ReadCombatLog(&unfiltered, combatLogActiveLine, fileName);
+                    }
+                    else
+                    {
+                        throw std::runtime_error("\nError Parsing " + fileName + "\nLine: " + std::to_string(line) + " - Missing Date");
+                    }
+                }
+                catch (const std::runtime_error& error)
+                {
+                    std::cout << error.what() << '\n';
+                }
+            }
+            line++;
+        } 
     }
+
+    //settings this as a variable for the object to use
+    this->unfilteredEncounters = unfiltered;
 };
 
-//this should do something in the future
-Encounters_Total::Encounters_Total()
+//init for modes live mode follows the most recent line so it doesnt have to iterate through the whole file every single time
+encounter_list::encounter_list(bool liveMode)
 {
-
-};
-
-//this should also do something
-Encounters_Total::Encounters_Total(std::vector<combat_log> contents)
-{
-    PopulateEncounterList(&encounterList, contents);
-    OrderEncounter(&orderedEncounters, encounterList);
-};
-
-//why did I not just decide to use one generic style of things instead of using multiples
-void Encounters_Total::PopulateEncounters(std::vector<combat_log> contents)
-{
-    PopulateEncounterList(&encounterList, contents);
-    OrderEncounter(&orderedEncounters, encounterList);
-};
-
-//I question the things that I do sometimes
-void Encounters_Total::PopulateEncounters(combat_log contents)
-{
-    PopulateEncounterList(&encounterList, contents);
-    OrderEncounters();
-    while (!encounterList.empty())
+    if (liveMode)
     {
-        encounterList.pop_back();
-    } 
+        this->currentLine = 1;
+    }
+    else
+    {
+        this->currentLine = -1;
+    }
 };

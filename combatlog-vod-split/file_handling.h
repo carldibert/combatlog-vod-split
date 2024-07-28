@@ -14,39 +14,21 @@
 #include <stdio.h>
 
 #include "file_handling.h"
-
-enum LogEventType
-{
-    ENCOUNTER_START = 0,
-    ENCOUNTER_END = 1,
-    ZONE_CHANGE = 2,
-    CHALLENGE_MODE_START = 3,
-    CHALLENGE_MODE_END = 4,
-    OTHER = 99
-};
-
-enum DifficultyType
-{
-    Normal = 14,
-    Heroic = 15,
-    Mythic = 16,
-    LFR = 17,
-    World = 100
-};
+#include "encounters.h"
 
 class combat_log_events
 {
 public:
-    LogEventType logAction;
+    //LogEventType logAction;
     std::string target;
     std::string date;
     std::string time;
     int keyLevel;
-    DifficultyType difficulty;
+    //DifficultyType difficulty;
     std::string dungeonName;
     bool keyChested;
     bool isOpenWorld;
-    combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget);
+    combat_log_events(std::string initDate, std::string initTime, std::string initTarget);
 private:
     
 };

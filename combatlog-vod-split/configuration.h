@@ -11,6 +11,7 @@ class configuration
         std::string videoDirectory;
         std::string logDirectory;
         std::string mode;
+        bool post_processing_protection;
         bool configFound;
         configuration();
 

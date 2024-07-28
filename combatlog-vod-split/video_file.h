@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <cstdlib>
 
+#include "ffmpeg.h"
+
 struct SYSTIME
 {
     WORD wYear;
@@ -19,12 +21,16 @@ class video_file
     public:
         std::string fileName;
         SYSTIME startTime;
+        int videoDuration;
+        video_file(std::string file, bool obsDate);
+
+        //to be depricated
         SYSTIME endTime;
         std::string date;
         int64_t duration;
         int durationInSeconds;
-        void InitFile(std::string file);
         video_file();
         video_file(std::string file, int64_t dur);
         SYSTIME GetEndTime(float seconds);
+        void InitFile(std::string file);
 };

@@ -173,11 +173,10 @@ DifficultyType convertToDifficultyTypeEnum (std::string& diff)
 };
 
 //partial initializer and I am not initializing everything and should really do it properly when I refactor
-combat_log_events::combat_log_events(std::string initDate, std::string initTime, LogEventType initLogAction, std::string initTarget)
+combat_log_events::combat_log_events(std::string initDate, std::string initTime, std::string initTarget)
 {
     this->date = initDate;
     this->time = initTime;
-    this->logAction = initLogAction;
     this->target = initTarget;
 };
 
@@ -358,7 +357,6 @@ bool combat_log::ReadFile(std::string fileName)
                     (
                         actionEvent[0],
                         actionEvent[1],
-                        logType,
                         eventsClean[2]
                     );
                     switch (logType)
@@ -370,7 +368,7 @@ bool combat_log::ReadFile(std::string fileName)
                             combatLogEvents.push_back(activeLine);
                             break;
                         case ZONE_CHANGE:
-                            activeLine.difficulty = convertToDifficultyTypeEnum(eventsClean[3]);
+                            //activeLine.difficulty = convertToDifficultyTypeEnum(eventsClean[3]);
                             combatLogEvents.push_back(activeLine);
                             break;
                         case CHALLENGE_MODE_START:
@@ -503,7 +501,6 @@ bool combat_log::ReadFileLive(std::string fileName)
                         (
                             actionEvent[0],
                             actionEvent[1],
-                            logType,
                             eventsClean[2]
                         );
                         switch (logType)
@@ -516,7 +513,7 @@ bool combat_log::ReadFileLive(std::string fileName)
                             std::cout << "Encounter detected" << std::endl;
                             break;
                         case ZONE_CHANGE:
-                            activeLine.difficulty = convertToDifficultyTypeEnum(eventsClean[3]);
+                            //activeLine.difficulty = convertToDifficultyTypeEnum(eventsClean[3]);
                             combatLogEvents.push_back(activeLine);
                             break;
                         case CHALLENGE_MODE_START:

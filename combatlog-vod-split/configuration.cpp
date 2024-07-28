@@ -24,6 +24,9 @@ configuration::configuration()
     //gets the exe path to get the config file
     this->exePath = GetExeDirectory();
 
+    //defaults to false unless explicitly enabled by configuration file
+    this->post_processing_protection = false;
+
     //checks if there is a config file within the executable's directory
     //if it is not there generates a sample config
     if (!std::filesystem::exists(exePath.string() + "\\config.conf"))
@@ -63,6 +66,13 @@ configuration::configuration()
                     else if (setting == "mode")
                     {
                         this->mode = line.substr(found + 1, line.size() - 1);
+                    }
+                    else if (setting == "post_processing_protection")
+                    {
+                        if (line.substr(found + 1, line.size() - 1) == "true")
+                        {
+                            this->post_processing_protection = true;
+                        }
                     }
                 }
             }

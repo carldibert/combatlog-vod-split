@@ -17,6 +17,8 @@
 //current after refactoring
 #include "driver.h"
 
+/*
+
 //returns the start or endpoints
 double GetStartOrEndPoints(SYSTIME fight, SYSTIME vid)
 {
@@ -194,6 +196,8 @@ bool split_mode_processing(configuration* conf)
     return true;
 };
 
+*/
+
 int main()
 {
     //checks for configuration file and returns error when missing information
@@ -207,17 +211,10 @@ int main()
     //sets the mode for the driver
     driver driver;
     driver.mode = conf.mode;
+    driver.obsName = conf.post_processing_protection;
     driver.SetCombatLogLocation(conf.logDirectory);
-
-    //runs based on mode that is set up within config
-    if (conf.mode == "split")
-    {
-        split_mode_processing(&conf);
-    }
-    else if (conf.mode == "live")
-    {
-        live_mode_processing(&conf);
-    }
+    driver.SetVideoFileLocation(conf.videoDirectory);
+    driver.StartProcessing();
 
     
 

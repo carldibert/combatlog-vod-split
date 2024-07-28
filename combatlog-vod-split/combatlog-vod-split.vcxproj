@@ -153,19 +153,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="combatlog-vod-split.cpp" />
+    <ClCompile Include="combatlog.cpp" />
     <ClCompile Include="configuration.cpp" />
     <ClCompile Include="encounters.cpp" />
     <ClCompile Include="ffmpeg.cpp" />
     <ClCompile Include="file_handling.cpp" />
     <ClCompile Include="driver.cpp" />
+    <ClCompile Include="processor.cpp" />
     <ClCompile Include="video_file.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="combatlog.h" />
     <ClInclude Include="configuration.h" />
     <ClInclude Include="encounters.h" />
     <ClInclude Include="ffmpeg.h" />
     <ClInclude Include="file_handling.h" />
     <ClInclude Include="driver.h" />
+    <ClInclude Include="processor.h" />
     <ClInclude Include="video_file.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
