@@ -4,12 +4,16 @@
 #include <vector>
 #include <filesystem>
 
-#include "processor.h"
+#include "ffmpeg.h"
 #include "video_file.h"
 #include "encounters.h"
 
-//processing but made like way cleaner
-void driver::StartProcessing()
+void driver::LiveProcessing()
+{
+
+};
+
+void driver::SplitProcessing()
 {
     //searches for video files that can be used in the vod directory
     std::cout << "Searching for video files" << std::endl;
@@ -18,7 +22,7 @@ void driver::StartProcessing()
         video_file tmp(file, obsName);
         this->vods.push_back(tmp);
     }
-    std::cout << "valid video files found: " + std::to_string(vods.size()) << std::endl;
+    std::cout << "Valid video files found: " + std::to_string(vods.size()) << std::endl;
     std::cout << "Searching for log files" << std::endl;
 
     //processes through the log files - false is for post processing true is live
@@ -28,7 +32,35 @@ void driver::StartProcessing()
         tmp.ReadFromLog(file);
         tmp.FormatFights();
     }
+    std::cout << "Number of encounters found: " + std::to_string(tmp.fights.size()) << std::endl;
+
+    ffmpeg proc;
+    std::string inFilename = "";
+    //starting to process encounters
+    for (auto& fight : tmp.fights)
+    {
+        
+
+        //do the filehandling and whatnot when im not half asleep
+        //proc.ProcessFile(in_filename.c_str(), out_filename.c_str(), from_seconds, end_seconds);
+    }
     int i = 0;
+};
+
+//processing but made like way cleaner
+void driver::StartProcessing()
+{
+    //removes case sensitivity for modes and initiates mode operation
+    transform(mode.begin(), mode.end(), mode.begin(), ::toupper);
+    if (mode == "SPLIT")
+    {
+        SplitProcessing();
+    }
+    else if (mode == "LIVE")
+    {
+        LiveProcessing();
+    }
+    
 };
 
 //sets the combatlog and iterates through all of the files within the logDirectory location
@@ -66,9 +98,7 @@ void driver::SetVideoFileLocation(std::string dirLocation)
 //for init on loading
 driver::driver()
 {
-    processor proc;
     this->mode = "";
-    this->proc = proc;
     this->currentLine = -1;
     this->obsName = false;
 };
