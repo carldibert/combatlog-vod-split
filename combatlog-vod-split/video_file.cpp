@@ -128,59 +128,117 @@ std::vector<std::string> GetOBSDateFromFileName(std::string str)
 video_file::video_file(std::string file, bool obsDate)
 {
     ffmpeg proc;
-    LPCSTR getString = fileName.c_str();
-    WIN32_FILE_ATTRIBUTE_DATA attrs;
-    GetFileAttributesExA(getString, GetFileExInfoStandard, &attrs);
-    SYSTEMTIME FileTime = { 0 };
-    SYSTEMTIME OutFileTimeLocal = { 0 };
-    FileTimeToSystemTime(&attrs.ftCreationTime, &FileTime);
-    SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &OutFileTimeLocal);
-
-    if (obsDate)
+    SYSTIME startTime = { 0 };
+    std::vector<std::string> splits = GetOBSDateFromFileName(file);
+    if (splits.size() == 6 && obsDate)
     {
         std::vector<std::string> splits = GetOBSDateFromFileName(file);
-        if (!splits.size() == 0)
-        {
-            SYSTIME startTime
+        startTime.wYear = stoi(splits[0]);
+        startTime.wMonth = stoi(splits[1]);
+        startTime.wDay = stoi(splits[2]);
+        startTime.wHour = stoi(splits[3]);
+        startTime.wMinute = stoi(splits[4]);
+        startTime.wSecond = stoi(splits[5]);
+    }
+    else
+    {
+        LPCSTR getString = fileName.c_str();
+        WIN32_FILE_ATTRIBUTE_DATA attrs;
+        GetFileAttributesExA(getString, GetFileExInfoStandard, &attrs);
+        SYSTEMTIME FileTime = { 0 };
+        SYSTEMTIME OutFileTimeLocal = { 0 };
+        FileTimeToSystemTime(&attrs.ftCreationTime, &FileTime);
+        SystemTimeToTzSpecificLocalTimeEx(NULL, &FileTime, &OutFileTimeLocal);
+
+        startTime.wYear = OutFileTimeLocal.wYear;
+        startTime.wMonth = OutFileTimeLocal.wMonth;
+        startTime.wDay = OutFileTimeLocal.wDay;
+        startTime.wHour = OutFileTimeLocal.wHour;
+        startTime.wMinute = OutFileTimeLocal.wMinute;
+        startTime.wSecond = OutFileTimeLocal.wSecond;
+        startTime.wMilliseconds = OutFileTimeLocal.wMilliseconds;
+    }
+
+    //int dur = proc.GetDuration(file.c_str()) / 1000000;
+    int hours = (proc.GetDuration(file.c_str()) / 1000000) / 3600;
+    int minutes = ((proc.GetDuration(file.c_str()) / 1000000) % 3600) / 60;
+    int seconds = (((proc.GetDuration(file.c_str()) / 1000000) % 3600) % 60);
+
+    SYSTIME endTime = { 0 };
+    
+    if ((startTime.wHour + hours) > 24)
+    {
+        endTime.wHour = (startTime.wHour + hours) / 24;
+        endTime.wDay = startTime.wDay + 1;
+    }
+    else
+    {
+        endTime.wHour = startTime.wHour + hours;
+        endTime.wDay = startTime.wDay;
+    }
+    if ((startTime.wMinute + minutes) > 24)
+    {
+        endTime.wMinute = (startTime.wMinute + minutes) / 60;
+    }
+    else
+    {
+        endTime.wMinute = startTime.wMinute + minutes;
+    }
+
+
+    if ((startTime.wHour + endTime.wHour) > 24)
+    {
+        endTime.wDay = startTime.wDay + 1;
+    }
+    else
+    {
+        endTime.wDay = startTime.wDay;
+    }
+    if ((startTime.wDay != endTime.wDay))
+    {
+        if ((startTime.wDay + 1) > 31 && startTime.wMonth == 1 ||
+            (startTime.wDay + 1) > 31 && startTime.wMonth == 3 ||
+            (startTime.wDay + 1) > 31 && startTime.wMonth == 5 ||
+            (startTime.wDay + 1) > 31 && startTime.wMonth == 7 ||
+            (startTime.wDay + 1) > 31 && startTime.wMonth == 8 ||
+            (startTime.wDay + 1) > 31 && startTime.wMonth == 10 ||
+            (startTime.wDay + 1) > 31 && startTime.wMonth == 12)
             {
-                stoi(splits[0]),
-                stoi(splits[1]),
-                stoi(splits[2]),
-                stoi(splits[3]),
-                stoi(splits[4]),
-                stoi(splits[5]),
-                0
-            };
-        }
+                endTime.wMonth = startTime.wMonth + 1;
+                endTime.wYear = startTime.wYear;
+            }
+        else if ((startTime.wDay + 1) > 30 && startTime.wMonth == 4 ||
+            (startTime.wDay + 1) > 30 && startTime.wMonth == 6 ||
+            (startTime.wDay + 1) > 30 && startTime.wMonth == 9 ||
+            (startTime.wDay + 1) > 30 && startTime.wMonth == 11)
+            {
+                endTime.wMonth = startTime.wMonth + 1;
+                endTime.wYear = startTime.wYear;
+            }
+        else if ((startTime.wDay + 1) > 29 && startTime.wMonth == 2 && startTime.wYear % 4 == 0 ||
+            (startTime.wDay + 1) > 28 && startTime.wMonth == 2 && startTime.wYear % 4 > 0)
+            {
+                endTime.wMonth = startTime.wMonth + 1;
+                endTime.wYear = startTime.wYear;
+            }
         else
         {
-            SYSTIME startTime
-            {
-                OutFileTimeLocal.wYear,
-                OutFileTimeLocal.wMonth,
-                OutFileTimeLocal.wDay,
-                OutFileTimeLocal.wHour,
-                OutFileTimeLocal.wMinute,
-                OutFileTimeLocal.wSecond,
-                OutFileTimeLocal.wMilliseconds
-            };
+            endTime.wMonth = startTime.wMonth;
+            endTime.wYear = startTime.wYear;
+        }
+        if (endTime.wMonth == 13)
+        {
+            endTime.wMonth = endTime.wMonth - 1;
+            endTime.wYear = startTime.wYear + 1;
         }
     }
     else
     {
-        SYSTIME startTime
-        {
-            OutFileTimeLocal.wYear,
-            OutFileTimeLocal.wMonth,
-            OutFileTimeLocal.wDay,
-            OutFileTimeLocal.wHour,
-            OutFileTimeLocal.wMinute,
-            OutFileTimeLocal.wSecond,
-            OutFileTimeLocal.wMilliseconds
-        };
+        endTime.wMonth = startTime.wMonth;
+
     }
 
-    int time = proc.GetDuration(file.c_str()) / 1000000;
+
 
     this->fileName = file;
     this->startTime = startTime;

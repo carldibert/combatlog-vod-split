@@ -8,11 +8,19 @@
 #include "video_file.h"
 #include "encounters.h"
 
+bool CheckIfFightIsInVideo(SYSTIME vidTime, SYSTIME fileTime)
+{
+
+
+    return true;
+};
+
 void driver::LiveProcessing()
 {
 
 };
 
+//processing for the split mode
 void driver::SplitProcessing()
 {
     //searches for video files that can be used in the vod directory
@@ -26,20 +34,29 @@ void driver::SplitProcessing()
     std::cout << "Searching for log files" << std::endl;
 
     //processes through the log files - false is for post processing true is live
-    encounter_list tmp(false);
+    encounter_list fights(false);
     for (auto& file : logFiles)
     {
-        tmp.ReadFromLog(file);
-        tmp.FormatFights();
+        fights.ReadFromLog(file);
+        fights.FormatFights();
     }
-    std::cout << "Number of encounters found: " + std::to_string(tmp.fights.size()) << std::endl;
+    std::cout << "Number of encounters found: " + std::to_string(fights.fights.size()) << std::endl;
 
     ffmpeg proc;
     std::string inFilename = "";
     //starting to process encounters
-    for (auto& fight : tmp.fights)
+    for (auto& fight : fights.fights)
     {
-        
+        int i = 0;
+        video_file activeVideo;
+        if (vods.size() > 1)
+        {
+
+        }
+        else
+        {
+            activeVideo = vods[0];
+        }
 
         //do the filehandling and whatnot when im not half asleep
         //proc.ProcessFile(in_filename.c_str(), out_filename.c_str(), from_seconds, end_seconds);
