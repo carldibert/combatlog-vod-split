@@ -8,11 +8,49 @@
 #include "video_file.h"
 #include "encounters.h"
 
-bool CheckIfFightIsInVideo(SYSTIME vidTime, SYSTIME fileTime)
+//gets the month length in seconds and returns
+int GetSecondsInMonth(int month, int year)
 {
+    if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
+    {
+        return (31 * 86400);
+    }
+    else if (month == 4 || month == 6 || month == 9 || month == 11)
+    {
+        return (30 * 86400);
+    }
+    else if (year % 4 == 0)
+    {
+        return (29 * 86400);
+    }
+    else
+    {
+        return (28 * 86400);
+    }
+};
 
+bool CheckIfFightIsInVideo(SYSTIME vidTime, SYSTIME fileTime, int videoDuration)
+{
+    
 
-    return true;
+    int differenceInSeconds =
+        ((vidTime.wYear - fileTime.wYear) * 31536000) +
+        (GetSecondsInMonth(vidTime.wMonth, vidTime.wYear) - GetSecondsInMonth(fileTime.wMonth, fileTime.wYear)) +
+        ((vidTime.wDay - fileTime.wDay) * 86400) +
+        ((vidTime.wHour - fileTime.wHour) * 3600) +
+        ((vidTime.wMinute - fileTime.wMinute) * 60) + 
+        (vidTime.wSecond - fileTime.wSecond);
+
+    //compares to see if the video duration is shorter than the difference from the start of video from the log file
+    //if the duration is larger then it returns true since the fight is within the video
+    if (videoDuration > differenceInSeconds)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 };
 
 void driver::LiveProcessing()
@@ -47,11 +85,16 @@ void driver::SplitProcessing()
     //starting to process encounters
     for (auto& fight : fights.fights)
     {
-        int i = 0;
         video_file activeVideo;
         if (vods.size() > 1)
         {
+            for (auto& vod : vods)
+            {
+                if (CheckIfFightIsInVideo(fight.startTime, vod.startTime, vod.videoDuration))
+                {
 
+                }
+            }
         }
         else
         {

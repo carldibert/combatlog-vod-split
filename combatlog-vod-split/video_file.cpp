@@ -238,8 +238,6 @@ video_file::video_file(std::string file, bool obsDate)
 
     }
 
-
-
     this->fileName = file;
     this->startTime = startTime;
     this->videoDuration = proc.GetDuration(file.c_str()) / 1000000;
