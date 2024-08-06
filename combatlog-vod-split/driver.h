@@ -15,6 +15,7 @@ class driver
         std::vector<std::string> vodFiles;
         std::vector<video_file> vods;
         std::vector<encounters> entries;
+        std::string vodDirectory;
         bool obsName;
         int currentLine;
         driver();

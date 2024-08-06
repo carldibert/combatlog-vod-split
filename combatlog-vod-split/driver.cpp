@@ -8,6 +8,19 @@
 #include "video_file.h"
 #include "encounters.h"
 
+//splits processing video and splits it
+bool SplitVideo(std::string in_filename, std::string out_filename, double from_seconds, double end_seconds, ffmpeg* proc)
+{
+    if (proc->ProcessFile(in_filename.c_str(), out_filename.c_str(), from_seconds, end_seconds))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+};
+
 //gets the month length in seconds and returns
 int GetSecondsInMonth(int month, int year)
 {
@@ -29,10 +42,20 @@ int GetSecondsInMonth(int month, int year)
     }
 };
 
+//gets the fight time from the start of the video returned in seconds
+double GetFightTimeFromStart(SYSTIME vidTime, SYSTIME fightTime)
+{
+    return ((fightTime.wYear - vidTime.wYear) * 31536000) +
+        (GetSecondsInMonth(fightTime.wMonth, fightTime.wYear) - GetSecondsInMonth(fightTime.wMonth, vidTime.wYear)) +
+        ((fightTime.wDay - vidTime.wDay) * 86400) +
+        ((fightTime.wHour - vidTime.wHour) * 3600) +
+        ((fightTime.wMinute - vidTime.wMinute) * 60) +
+        (fightTime.wSecond - vidTime.wSecond);
+};
+
+//checks to see if the fight is in the video and if it is returns true
 bool CheckIfFightIsInVideo(SYSTIME vidTime, SYSTIME fileTime, int videoDuration)
 {
-    
-
     int differenceInSeconds =
         ((vidTime.wYear - fileTime.wYear) * 31536000) +
         (GetSecondsInMonth(vidTime.wMonth, vidTime.wYear) - GetSecondsInMonth(fileTime.wMonth, fileTime.wYear)) +
@@ -81,30 +104,46 @@ void driver::SplitProcessing()
     std::cout << "Number of encounters found: " + std::to_string(fights.fights.size()) << std::endl;
 
     ffmpeg proc;
-    std::string inFilename = "";
     //starting to process encounters
     for (auto& fight : fights.fights)
     {
-        video_file activeVideo;
-        if (vods.size() > 1)
+        for (auto& vod : vods)
         {
-            for (auto& vod : vods)
+            //checks to see if fight is within the video
+            if (CheckIfFightIsInVideo(fight.startTime, vod.startTime, vod.videoDuration))
             {
-                if (CheckIfFightIsInVideo(fight.startTime, vod.startTime, vod.videoDuration))
-                {
+                //generates filename for output
+                std::string outFileName =
+                    vodDirectory + "\\" +
+                    std::to_string(fight.startTime.wYear) + "-" +
+                    std::to_string(fight.startTime.wMonth) + "-" +
+                    std::to_string(fight.startTime.wDay) + " " +
+                    fight.encounterName + " " +
+                    fight.difficulty + " " +
+                    std::to_string(fight.fightNumber) + ".mkv";
 
+                //gets start time as well as checking to see if adding in the padding for pre-pulls as well as accounting for the B frames
+                double startTime = GetFightTimeFromStart(vod.startTime, fight.startTime);
+                double startTimeAdjusted = 0;
+                if ((startTime - 20) <= 0)
+                {
+                    startTimeAdjusted = 0;
                 }
+                else
+                {
+                    startTimeAdjusted = startTime - 20;
+                }
+
+                //processing video and outputs if there is a failure in processing
+                if (!SplitVideo(vod.fileName, outFileName, startTimeAdjusted, (startTime + fight.duration) + 20, &proc))
+                {
+                    std::cout << "Error processing file: " + outFileName << std::endl;
+                }
+                
             }
         }
-        else
-        {
-            activeVideo = vods[0];
-        }
-
-        //do the filehandling and whatnot when im not half asleep
-        //proc.ProcessFile(in_filename.c_str(), out_filename.c_str(), from_seconds, end_seconds);
     }
-    int i = 0;
+    std::cout << "Finished processing" << std::endl;
 };
 
 //processing but made like way cleaner
@@ -120,7 +159,6 @@ void driver::StartProcessing()
     {
         LiveProcessing();
     }
-    
 };
 
 //sets the combatlog and iterates through all of the files within the logDirectory location
@@ -153,6 +191,7 @@ void driver::SetVideoFileLocation(std::string dirLocation)
             this->vodFiles.push_back(file.path().generic_string());
         }
     }
+    this->vodDirectory = dirLocation;
 };
 
 //for init on loading
