@@ -76,13 +76,186 @@ bool CheckIfFightIsInVideo(SYSTIME vidTime, SYSTIME fileTime, int videoDuration)
     }
 };
 
-void driver::LiveProcessing()
+//checks to see if the old video is newer than the new video in list
+//used for comparing two files to get the most recent vod to use
+bool CheckIfFileIsNewer(video_file oldVideo, video_file newVideo)
 {
+    if (oldVideo.startTime.wYear < newVideo.startTime.wYear)
+    {
+        return true;
+    }
+    if (oldVideo.startTime.wMonth < newVideo.startTime.wMonth)
+    {
+        return true;
+    }
+    if (oldVideo.startTime.wDay < newVideo.startTime.wDay)
+    {
+        return true;
+    }
+    if (oldVideo.startTime.wHour < newVideo.startTime.wHour)
+    {
+        return true;
+    }
+    if (oldVideo.startTime.wMinute < newVideo.startTime.wMinute)
+    {
+        return true;
+    }
+    if (oldVideo.startTime.wSecond < newVideo.startTime.wSecond)
+    {
+        return true;
+    }
 
+    return false;
+}
+
+//gets the most recent video in video directory and populates that in the currentVideo object
+void GetMostRecentVideo(video_file* currentVideo, std::vector<video_file> vods)
+{
+    video_file temp;
+    for (auto& vid : vods)
+    {
+        if (temp.fileName == "")
+        {
+            temp = vid;
+        }
+        else
+        {
+            if (CheckIfFileIsNewer(temp, vid))
+            {
+                temp = vid;
+            }
+        }
+    }
+    currentVideo->fileName = temp.fileName;
+    currentVideo->startTime = temp.startTime;
+    currentVideo->videoDuration = temp.videoDuration;
+    currentVideo->endTime = temp.endTime;
+    currentVideo->date = temp.date;
+    currentVideo->duration = temp.duration;
+    currentVideo->durationInSeconds = temp.durationInSeconds;
+};
+
+//checks to see if the new log file is newer than the existing newest file
+bool CheckIfLogIsNewer(std::string oldFile, std::string newFile)
+{
+    //gets the systime for the new and old files
+    LPCSTR oldFileString = oldFile.c_str();
+    WIN32_FILE_ATTRIBUTE_DATA oldFileAttrs;
+    GetFileAttributesExA(oldFileString, GetFileExInfoStandard, &oldFileAttrs);
+    SYSTEMTIME OldFileTime = { 0 };
+    FileTimeToSystemTime(&oldFileAttrs.ftCreationTime, &OldFileTime);
+
+    LPCSTR newFileString = newFile.c_str();
+    WIN32_FILE_ATTRIBUTE_DATA newFileAttrs;
+    GetFileAttributesExA(newFileString, GetFileExInfoStandard, &newFileAttrs);
+    SYSTEMTIME NewFileTime = { 0 };
+    FileTimeToSystemTime(&newFileAttrs.ftCreationTime, &NewFileTime);
+    
+    //does the file checks and returns true of new files is newer
+    if (OldFileTime.wYear < NewFileTime.wYear)
+    {
+        return true;
+    }
+    if (OldFileTime.wMonth < NewFileTime.wMonth)
+    {
+        return true;
+    }
+    if (OldFileTime.wDay < NewFileTime.wDay)
+    {
+        return true;
+    }
+    if (OldFileTime.wHour < NewFileTime.wHour)
+    {
+        return true;
+    }
+    if (OldFileTime.wMinute < NewFileTime.wMinute)
+    {
+        return true;
+    }
+    if (OldFileTime.wSecond < NewFileTime.wSecond)
+    {
+        return true;
+    }
+
+    return false;
+};
+
+//checks through logs and returns the most recent file in terms of creation date
+std::string GetMostRecentLog(std::vector<std::string> logFiles)
+{
+    std::string temp;
+
+    for (auto& file : logFiles)
+    {
+        if (temp == "")
+        {
+            temp = file;
+        }
+        else
+        {
+            if (CheckIfLogIsNewer(temp, file))
+            {
+                temp = file;
+            }
+        }
+    }
+
+    return temp;
+};
+
+//processing for live splitting vod during fight
+bool driver::LiveProcessing()
+{
+    //searching for active video
+    std::cout << "Searching for video file" << std::endl;
+    for (auto& file : vodFiles)
+    {
+        video_file tmp(file, obsName);
+        this->vods.push_back(tmp);
+    }
+
+    //sets current video to the most recent video in the video directory
+    video_file currentVideo;
+    if (vods.size() > 1)
+    {
+        GetMostRecentVideo(&currentVideo, vods);
+    }
+    else
+    {
+        currentVideo = vods[0];
+    }
+    std::cout << "Currently Selected vod: " + currentVideo.fileName << std::endl;
+
+    //sets current log to the most recent log file in the log directory
+    std::string currentLog;
+    if (logFiles.size() > 1)
+    {
+        currentLog = GetMostRecentLog(logFiles);
+    }
+    else
+    {
+        currentLog = logFiles[0];
+    }
+    std::cout << "Currently Selected log: " + currentLog << std::endl;
+    
+    //checks for file name to have been read as well as log to be found
+    //error handling returns failure if it cannot
+    if (currentVideo.fileName == "")
+    {
+        std::cout << "Video is unable to be read" << std::endl;
+        return false;
+    }
+    if (currentLog == "")
+    {
+        std::cout << "Log file is unable to be read" << std::endl;
+        return false;
+    }
+
+    return true;
 };
 
 //processing for the split mode
-void driver::SplitProcessing()
+bool driver::SplitProcessing()
 {
     //searches for video files that can be used in the vod directory
     std::cout << "Searching for video files" << std::endl;
@@ -144,21 +317,31 @@ void driver::SplitProcessing()
         }
     }
     std::cout << "Finished processing" << std::endl;
+    return true;
 };
 
 //processing but made like way cleaner
-void driver::StartProcessing()
+bool driver::StartProcessing()
 {
     //removes case sensitivity for modes and initiates mode operation
     transform(mode.begin(), mode.end(), mode.begin(), ::toupper);
     if (mode == "SPLIT")
     {
-        SplitProcessing();
+        if (!SplitProcessing())
+        {
+            std::cout << "Error has occured. Exiting" << std::endl;
+            return false;
+        }
     }
     else if (mode == "LIVE")
     {
-        LiveProcessing();
+        if (!LiveProcessing())
+        {
+            std::cout << "Error has occured. Exiting" << std::endl;
+            return false;
+        }
     }
+    return true;
 };
 
 //sets the combatlog and iterates through all of the files within the logDirectory location

@@ -21,7 +21,7 @@ class driver
         driver();
         void SetCombatLogLocation(std::string dirLocation);
         void SetVideoFileLocation(std::string dirLocation);
-        void StartProcessing();
-        void SplitProcessing();
-        void LiveProcessing();
+        bool StartProcessing();
+        bool SplitProcessing();
+        bool LiveProcessing();
 };

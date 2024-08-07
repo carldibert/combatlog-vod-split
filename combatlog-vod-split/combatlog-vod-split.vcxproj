@@ -153,7 +153,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="combatlog-vod-split.cpp" />
-    <ClCompile Include="combatlog.cpp" />
     <ClCompile Include="configuration.cpp" />
     <ClCompile Include="encounters.cpp" />
     <ClCompile Include="ffmpeg.cpp" />
@@ -162,7 +161,6 @@
     <ClCompile Include="video_file.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="combatlog.h" />
     <ClInclude Include="configuration.h" />
     <ClInclude Include="encounters.h" />
     <ClInclude Include="ffmpeg.h" />
